@@ -1,6 +1,8 @@
 // Copyright (c) 2023, John K Palladino
 
-import * as uuid from "https://deno.land/std@0.175.0/uuid/mod.ts";
+import { CapabilityToken } from "./Capability.ts";
+import { AuthError } from "./Errors.ts";
+import { AccessToken, Role, UserSession } from "./Supporting.ts";
 
 export class Authenticator {
     sessions: Map<AccessToken, UserSession>;
@@ -54,48 +56,8 @@ export class Authenticator {
     }
 }
 
-class AccessToken {
-    rawToken: string;
 
-    constructor() {
-        this.rawToken = uuid.v4.generate();
-    }
-}
 
-type UserId = string;
-
-type CapabilityToken = string;
-
-class Capabilities {
-    capabilities: Set<CapabilityToken>;
-
-    has(capability: CapabilityToken) {
-        return this.capabilities.has(capability);
-    }
-}
-
-enum AuthError {
-    NotLoggedIn,
-    WrongRole,
-    SessionExpired,
-    AccessDenied,
-
-    Ok
-}
-
-enum Role {
-    Admin,
-    Reviewer,
-    Publisher,
-}
-
-class UserSession {
-    user_id: UserId;
-    access_token: AccessToken;
-    expiration: Date;
-    permissions: Capabilities;
-    role: Role;
-}
 
 // AccessToken
 // An access token is a string that is used to authenticate a user.
