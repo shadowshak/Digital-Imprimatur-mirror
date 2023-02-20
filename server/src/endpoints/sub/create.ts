@@ -5,9 +5,10 @@ import {
     textResponse,
     jsonResponse,
   } from "https://deno.land/x/reno@v2.0.81/reno/mod.ts";
-import { AuthError } from "../../auth/Errors.ts";
+import { AuthError } from "../../models/auth/Errors.ts";
   
-import { AccessToken } from "../../auth/Supporting.ts";
+import { AccessToken } from "../../models/auth/Supporting.ts";
+import { SubmissionId } from "../../models/submissions/Submission.ts";
 
 
 class SubCreateRequest {
@@ -16,14 +17,10 @@ class SubCreateRequest {
     description: string;
 
     constructor(token: string, name: string, description: string) {
-        this.token = token;
+        this.token = new AccessToken(token);
         this.name = name;
         this.description = description;
     }
-}
-
-class SubCreateResponse {
-    submission_id: SubmissionId;
 }
 
 export async function create(req: AugmentedRequest) {

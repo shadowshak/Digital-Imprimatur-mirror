@@ -5,9 +5,13 @@ import "./Capability.ts"
 export class AccessToken {
     rawToken: string;
 
-    constructor() {
-        this.rawToken = uuid.v4.generate();
+    constructor(raw: string) {
+        this.rawToken = raw;
     }
+}
+
+export function generate_access_token(): AccessToken {
+    return new AccessToken(uuid.v4.generate());
 }
 
 export class UserSession {
