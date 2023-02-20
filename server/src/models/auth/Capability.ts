@@ -19,6 +19,11 @@ export class CrudCapability {
     }
 }
 
+///
+/// A set of capabilities owned by a user
+///
+/// This can be used to determine what a user can do
+///
 export class Capabilities {
     capabilities: Set<CapabilityToken>;
 
@@ -28,6 +33,10 @@ export class Capabilities {
 
     has(capability: CapabilityToken) {
         return this.capabilities.has(capability);
+    }
+
+    grant(capability: CapabilityToken) {
+        this.capabilities.add(capability);
     }
 }
 

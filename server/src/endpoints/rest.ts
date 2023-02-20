@@ -5,29 +5,21 @@ import {
 
   import { serveListener } from "https://deno.land/std@v0.177.0/http/server.ts";
 
-import { submissionRouter } from "./sub/router.ts";
-import { HttpError } from "../errors.ts";
-
 ///
 /// Creates a new response with the given status and message.
 ///
-function CreateErrorResponse(status: number, { message }: Error) {
+function createErrorResponse(status: number, { message }: Error) {
     return new Response(message, { status });
 }
 
-function MapErrorResponse(e: Error) {
-    let errorCode = 500;
-
-    if (e instanceof HttpError) {
-        errorCode = e.code;
-    }
-
-    return CreateErrorResponse(errorCode, e);
+function map_error_response(e: Error) {
+    return createErrorResponse(500, e);
 }
 
-export async function StartRestServer(port = 8080) {
+
+export async function start_rest_server(port: number = 8080) {
     const routes = createRouteMap([
-        ["/sub", submissionRouter]
+  
     ]);
 
     const router = createRouter(routes);
@@ -43,7 +35,7 @@ export async function StartRestServer(port = 8080) {
                 const response = await router(req);
                 return response;
             } catch (e) {
-                return MapErrorResponse(e);
+                return map_error_response(e);
             }
         });
 }

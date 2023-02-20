@@ -1,6 +1,9 @@
 import { CrudCapability } from "../auth/Capability.ts";
 import * as uuid from "https://deno.land/std@0.175.0/uuid/mod.ts";
 
+///
+/// Unique identifier for a submission
+///
 export class SubmissionId {
     id: string;
 
@@ -14,6 +17,9 @@ export class SubmissionId {
 }
 
 
+///
+/// Stores all data for a submission
+///
 export class Submission {
     status:         SubmissionStatus;
     
@@ -44,6 +50,9 @@ export class Submission {
     }
 }
 
+///
+/// Represents the status of a submission
+///
 enum SubmissionStatus {
     AwaitingSubmission,
     UnderReview,
