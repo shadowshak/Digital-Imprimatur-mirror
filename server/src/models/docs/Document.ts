@@ -2,6 +2,9 @@ import * as uuid from "https://deno.land/std@0.175.0/uuid/mod.ts";
 
 export type Document = string;
 
+///
+/// Unique identifier for a document
+///
 export class DocumentId {
     id: string;
 
@@ -14,6 +17,9 @@ export class DocumentId {
     }
 }
 
+///
+/// Represents what kind of document this is
+///
 export enum DocKind {
     Document,
     Feedback

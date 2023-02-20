@@ -6,8 +6,8 @@ import {
     jsonResponse,
   } from "https://deno.land/x/reno@v2.0.81/reno/mod.ts";
 import { AuthError } from "../../models/auth/Errors.ts";
+import { AccessToken } from "../../models/auth/Session.ts";
   
-import { AccessToken } from "../../models/auth/Supporting.ts";
 import { SubmissionId } from "../../models/submissions/Submission.ts";
 
 
@@ -20,6 +20,20 @@ class SubCreateRequest {
         this.token = new AccessToken(token);
         this.name = name;
         this.description = description;
+    }
+
+    static from_json(json: any): SubCreateRequest | null {
+        if (!json) return null;
+
+        if (!("token" in json)) return null;
+        if (!("name" in json)) return null;
+        if (!("description" in json)) return null;
+
+        if (typeof json.token !== "string") return null;
+        if (typeof json.name !== "string") return null;
+        if (typeof json.description !== "string") return null;
+
+        return new SubCreateRequest(json.token, json.name, json.description);
     }
 }
 
@@ -63,17 +77,7 @@ export async function create(req: AugmentedRequest) {
 }
 
 function sub_create_request(req: any): SubCreateRequest | null {
-    if (!req) return null;
-
-    if (!("token" in req)) return null;
-    if (!("name" in req)) return null;
-    if (!("description" in req)) return null;
-
-    if (typeof req.token !== "string") return null;
-    if (typeof req.name !== "string") return null;
-    if (typeof req.description !== "string") return null;
-
-    return new SubCreateRequest(req.token, req.name, req.description);
+    
 }
 
 const MAX_NAME_LENGTH = 100;
