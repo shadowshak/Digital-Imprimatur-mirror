@@ -4,13 +4,13 @@
 /// For example, a document will have CRUD capabilities to read, edit, and delete
 ///
 export class CrudCapability {
-    read: CapabilityToken;
-    edit: CapabilityToken;
+    read:   CapabilityToken;
+    edit:   CapabilityToken;
     remove: CapabilityToken;
 
     constructor(
-        read: CapabilityToken,
-        edit: CapabilityToken,
+        read:   CapabilityToken,
+        edit:   CapabilityToken,
         remove: CapabilityToken)
     {
         this.read = read;

@@ -34,18 +34,18 @@ export enum Role {
 }
 
 export class UserSession {
-    user_id: UserId;
-    access_token: AccessToken;
-    expiration: Date;
-    permissions: Capabilities;
-    role: Role;
+    user_id:        UserId;
+    access_token:   AccessToken;
+    expiration:     Date;
+    permissions:    Capabilities;
+    role:           Role;
 
     constructor(
-        user_id: UserId,
-        access_token: AccessToken,
-        expiration: Date,
-        permissions: Capabilities,
-        role: Role)
+        user_id:        UserId,
+        access_token:   AccessToken,
+        expiration:     Date,
+        permissions:    Capabilities,
+        role:           Role)
     {
         this.user_id = user_id;
         this.access_token = access_token;

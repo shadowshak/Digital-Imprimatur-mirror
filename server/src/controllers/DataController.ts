@@ -19,7 +19,9 @@ interface DataController {
     ///
     /// Stores a file on the filesystem
     ///
-    StoreInFile(file: string, data: Buffer): Promise<void>;
+    StoreInFile(
+        file: string,
+        data: Buffer): Promise<void>;
 
     ///
     /// Loads a file from the filesystem
