@@ -1,5 +1,6 @@
 // Copyright (c) 2023, John K Palladino
 
+/*
 import { CapabilityToken } from "./Capability.ts";
 import { AuthError } from "./Errors.ts";
 import { AccessToken, Role, UserSession } from "./Supporting.ts";
@@ -54,7 +55,7 @@ export class Authenticator {
         // remove the session from our cache
         this.sessions.delete(access_token);
     }
-}
+}*/
 
 
 
