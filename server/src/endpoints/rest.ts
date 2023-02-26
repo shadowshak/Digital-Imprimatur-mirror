@@ -5,6 +5,8 @@ import {
 
   import { serveListener } from "https://deno.land/std@v0.177.0/http/server.ts";
 
+import { submissionRouter } from "./sub/router.ts";
+
 ///
 /// Creates a new response with the given status and message.
 ///
@@ -16,10 +18,9 @@ function map_error_response(e: Error) {
     return createErrorResponse(500, e);
 }
 
-
-export async function start_rest_server(port: number = 8080) {
+export async function start_rest_server(port = 8080) {
     const routes = createRouteMap([
-  
+        ["/sub", submissionRouter]
     ]);
 
     const router = createRouter(routes);
