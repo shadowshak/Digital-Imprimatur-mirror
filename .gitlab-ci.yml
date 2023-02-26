@@ -21,16 +21,11 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - deploy
 
-build-server:       # This job runs in the build stage, which runs first.
-  image: denoland/deno:latest
+build-job:       # This job runs in the build stage, which runs first.
   stage: build
-  #services:
-  #- postgres:latest
-  #cache:
-  #  paths:
-  #    - node_modules/
   script:
-    - deno run --allow-net --reload server/main.ts
+    - echo "Compiling the code..."
+    - echo "Compile complete."
 
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
