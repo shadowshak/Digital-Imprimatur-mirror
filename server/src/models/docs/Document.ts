@@ -12,7 +12,7 @@ export class DocumentId {
         this.id = id;
     }
 
-    static generate(): DocumentId {
+    static Generate(): DocumentId {
         return new DocumentId(uuid.v4.generate());
     }
 }

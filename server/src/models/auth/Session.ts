@@ -10,7 +10,7 @@ export class AccessToken {
         this.rawToken = raw;
     }
 
-    static generate(): AccessToken {
+    static Generate(): AccessToken {
         return new AccessToken(uuid.v4.generate())
     }
 }
@@ -22,7 +22,7 @@ export class UserId {
         this.rawId = raw;
     }
 
-    static generate(): UserId {
+    static Generate(): UserId {
         return new UserId(uuid.v4.generate())
     }
 }
