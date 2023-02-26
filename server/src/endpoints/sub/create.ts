@@ -2,9 +2,9 @@ import {
     createRouter,
     AugmentedRequest,
     createRouteMap,
-    textResponse,
     jsonResponse,
   } from "https://deno.land/x/reno@v2.0.81/reno/mod.ts";
+import { BadJsonError, InvalidContentTypeError, InvalidMethodError, PayloadTooLargeError } from "../../errors.ts";
 import { AuthError } from "../../models/auth/Errors.ts";
 import { AccessToken } from "../../models/auth/Session.ts";
   
@@ -39,53 +39,36 @@ class SubCreateRequest {
 
 export async function create(req: AugmentedRequest) {
     if (req.method != "POST") {
-        return textResponse("Invalid method", 405);
+        throw new InvalidMethodError();
     }
     if (req.headers.get("Content-Type") != "application/json") {
-        return textResponse("Invalid content type", 415);
+        throw new InvalidContentTypeError();
     }
 
     const body = await req.json();
-    const request = sub_create_request(body);
+    const request = SubCreateRequest.from_json(body);
 
     if (!request) {
-        return textResponse("Bad JSON", 400);
+        throw new BadJsonError();
     }
 
-    if (check_for_size_errors(request)) {
-        return textResponse("Payload too large", 413);
-    }
+    check_for_size_errors(request);
 
     const response = {};
 
-    if ("error" in response) {
-        switch (response.error) {
-            case AuthError.NotLoggedIn:
-                return textResponse("Not logged in", 403);
-            case AuthError.WrongRole:
-                return textResponse("Wrong role", 403);
-            case AuthError.SessionExpired:
-                return textResponse("Session expired", 403);
-            case AuthError.AccessDenied:
-                return textResponse("Access denied", 403);
-            default:
-                return textResponse("Access denied", 403);
-        }
-    }
-
     return jsonResponse(response);
-}
-
-function sub_create_request(req: any): SubCreateRequest | null {
-    
 }
 
 const MAX_NAME_LENGTH = 100;
 const MAX_DESCRIPTION_LENGTH = 1000;
 
-function check_for_size_errors(req: SubCreateRequest): boolean {
-    if (req.name.length > MAX_NAME_LENGTH) return true;
-    if (req.description.length > MAX_DESCRIPTION_LENGTH) return true;
+function check_for_size_errors(req: SubCreateRequest) {
+    if (
+        req.name.length > MAX_NAME_LENGTH ||
+        req.description.length > MAX_DESCRIPTION_LENGTH
+    ) {
+        throw new PayloadTooLargeError();
+    }
 
-    return false;
+    
 }
