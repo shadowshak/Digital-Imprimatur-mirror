@@ -31,11 +31,11 @@ export class Capabilities {
         this.capabilities = new Set();
     }
 
-    has(capability: CapabilityToken) {
+    Has(capability: CapabilityToken) {
         return this.capabilities.has(capability);
     }
 
-    grant(capability: CapabilityToken) {
+    Grant(capability: CapabilityToken) {
         this.capabilities.add(capability);
     }
 }
@@ -50,7 +50,7 @@ export class CapabilityToken {
         this.capability_path = capability_path;
     }
 
-    subtoken(name: string): CapabilityToken {
+    Subtoken(name: string): CapabilityToken {
         return new CapabilityToken(`${this.capability_path}.${name}`);
     }
 }

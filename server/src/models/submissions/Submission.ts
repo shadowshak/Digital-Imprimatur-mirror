@@ -11,7 +11,7 @@ export class SubmissionId {
         this.id = id;
     }
 
-    static generate(): SubmissionId {
+    static Generate(): SubmissionId {
         return new SubmissionId(uuid.v4.generate());
     }
 }
