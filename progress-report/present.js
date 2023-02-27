@@ -62,7 +62,7 @@ function main() {
 }
 
 function fetchData() {
-    $.getJSON("http://127.0.0.1:3000/progress.json", function(data) {
+    $.getJSON("./progress.json", function(data) {
         categories = data;
 
         main();
