@@ -28,7 +28,6 @@ function Home({ role }) {
 
   return (
     <>
-      {console.log(role)}
       <AppBar position="static">
         <Toolbar>
           <IconButton
