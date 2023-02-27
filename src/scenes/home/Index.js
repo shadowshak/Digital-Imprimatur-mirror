@@ -19,8 +19,8 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-function Home() {
-  const [value, setValue] = React.useState(0);
+function Home({ role }) {
+  const [value, setValue] = React.useState(1);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -28,6 +28,7 @@ function Home() {
 
   return (
     <>
+      {console.log(role)}
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -52,7 +53,10 @@ function Home() {
         >
           <Tab label="Completed" sx={{ width: "250px" }} />
           <Tab label="In Progress" sx={{ width: "250px" }} />
-          <Tab label="Todo" sx={{ width: "250px" }} />
+          <Tab
+            label={role === "publisher" ? "Needs Attention" : "Todo"}
+            sx={{ width: "250px" }}
+          />
         </Tabs>
         <Box height="86vh" sx={{ overflow: "auto" }}>
           <List>
@@ -67,9 +71,11 @@ function Home() {
                       <IconButton aria-label="Edit">
                         <EditIcon sx={{ color: "#1976d2" }} />
                       </IconButton>
-                      <IconButton aria-label="Delete">
-                        <DeleteIcon sx={{ color: "#1976d2" }} />
-                      </IconButton>
+                      {role === "publisher" && (
+                        <IconButton aria-label="Delete">
+                          <DeleteIcon sx={{ color: "#1976d2" }} />
+                        </IconButton>
+                      )}
                     </>
                   }
                   title="Book or Publication Title"
@@ -103,9 +109,11 @@ function Home() {
                       <IconButton aria-label="Edit">
                         <EditIcon sx={{ color: "#1976d2" }} />
                       </IconButton>
-                      <IconButton aria-label="Delete">
-                        <DeleteIcon sx={{ color: "#1976d2" }} />
-                      </IconButton>
+                      {role === "publisher" && (
+                        <IconButton aria-label="Delete">
+                          <DeleteIcon sx={{ color: "#1976d2" }} />
+                        </IconButton>
+                      )}
                     </>
                   }
                   title="Book or Publication Title"
@@ -139,9 +147,11 @@ function Home() {
                       <IconButton aria-label="Edit">
                         <EditIcon sx={{ color: "#1976d2" }} />
                       </IconButton>
-                      <IconButton aria-label="Delete">
-                        <DeleteIcon sx={{ color: "#1976d2" }} />
-                      </IconButton>
+                      {role === "publisher" && (
+                        <IconButton aria-label="Delete">
+                          <DeleteIcon sx={{ color: "#1976d2" }} />
+                        </IconButton>
+                      )}
                     </>
                   }
                   title="Book or Publication Title"
@@ -175,9 +185,11 @@ function Home() {
                       <IconButton aria-label="Edit">
                         <EditIcon sx={{ color: "#1976d2" }} />
                       </IconButton>
-                      <IconButton aria-label="Delete">
-                        <DeleteIcon sx={{ color: "#1976d2" }} />
-                      </IconButton>
+                      {role === "publisher" && (
+                        <IconButton aria-label="Delete">
+                          <DeleteIcon sx={{ color: "#1976d2" }} />
+                        </IconButton>
+                      )}
                     </>
                   }
                   title="Book or Publication Title"
@@ -211,9 +223,11 @@ function Home() {
                       <IconButton aria-label="Edit">
                         <EditIcon sx={{ color: "#1976d2" }} />
                       </IconButton>
-                      <IconButton aria-label="Delete">
-                        <DeleteIcon sx={{ color: "#1976d2" }} />
-                      </IconButton>
+                      {role === "publisher" && (
+                        <IconButton aria-label="Delete">
+                          <DeleteIcon sx={{ color: "#1976d2" }} />
+                        </IconButton>
+                      )}
                     </>
                   }
                   title="Book or Publication Title"
