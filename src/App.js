@@ -10,9 +10,17 @@ function App() {
     <Router>
       <CssBaseline />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/reviewer/home" element={<Home role={"reviewer"} />} />
+        <Route path="/publisher/home" element={<Home role={"publisher"} />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/document" element={<Document />} />
+        <Route
+          path="reviewer/document"
+          element={<Document role={"reviewer"} />}
+        />
+        <Route
+          path="publisher/document"
+          element={<Document role={"piublisher"} />}
+        />
       </Routes>
     </Router>
   );
