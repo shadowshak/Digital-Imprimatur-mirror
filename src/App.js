@@ -19,7 +19,7 @@ function App() {
         />
         <Route
           path="publisher/document"
-          element={<Document role={"piublisher"} />}
+          element={<Document role={"publisher"} />}
         />
       </Routes>
     </Router>
