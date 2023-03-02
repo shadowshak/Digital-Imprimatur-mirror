@@ -1,6 +1,5 @@
 import * as bcrypt from "https://deno.land/x/bcrypt@v0.3.0/mod.ts";
 import { Controller } from "./Controller.ts";
-import { FsDataController } from "./DataController.ts";
 
 type UserId = string;
 

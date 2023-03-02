@@ -1,13 +1,10 @@
 import {
-    createRouter,
     AugmentedRequest,
-    createRouteMap,
     jsonResponse,
-  } from "https://deno.land/x/reno@v2.0.81/reno/mod.ts";
+} from "https://deno.land/x/reno@v2.0.81/reno/mod.ts";
+
 import { BadJsonError, InvalidContentTypeError, InvalidMethodError, PayloadTooLargeError } from "../../errors.ts";
 import { AccessToken } from "../../models/auth/Session.ts";
-  
-import { SubmissionId } from "../../models/submissions/Submission.ts";
 
 
 class SubCreateRequest {
@@ -36,7 +33,7 @@ class SubCreateRequest {
     }
 }
 
-export async function create(req: AugmentedRequest) {
+export async function sub_create(req: AugmentedRequest) {
     if (req.method != "POST") {
         throw new InvalidMethodError();
     }
@@ -68,6 +65,4 @@ function check_for_size_errors(req: SubCreateRequest) {
     ) {
         throw new PayloadTooLargeError();
     }
-
-    
 }
