@@ -1,0 +1,26 @@
+[
+    { "name": "Application", "components": [
+        { "name": "Reviewer UI", "progress": 0.0 },
+        { "name": "Publisher UI", "progress": 0.0 },
+        { "name": "Administrator UI", "progress": 0.0 },
+        { "name": "Bots", "progress": 0.0 }
+    ] },
+    { "name": "Presentation", "components": [
+        { "name": "REST API", "progress": 0.1 },
+        { "name": "Bot API", "progress": 0.0 }
+    ] },
+    { "name": "Business Logic", "components": [
+        { "name": "Session Controller", "progress": 0.3 },
+        { "name": "Document Controller", "progress": 0.0 }
+    ] },
+    { "name": "Persistence", "components": [
+        { "name": "Encryption Controller", "progress": 0.2 },
+        { "name": "User Controller", "progress": 0.1 }
+    ] },
+    { "name": "Data", "components": [
+        { "name": "Data Controller", "progress": 0.1 }
+    ] },
+    { "name": "Physical", "components": [
+        { "name": "Database", "progress": 0.0 }
+    ] }
+]
