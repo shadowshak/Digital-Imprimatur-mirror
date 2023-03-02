@@ -6,6 +6,7 @@ Architecture.drawio.pdf
 /server/deno.lock
 
 # dependencies
+/node_modules/**
 /node_modules
 /.pnp
 .pnp.js
