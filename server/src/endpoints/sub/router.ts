@@ -3,7 +3,7 @@ import { createRouteMap, createRouter } from "https://deno.land/x/reno@v2.0.81/r
 import { create } from "./create.ts"
 
 const routeMap = createRouteMap([
-    ["/create", create]
+    ["create", create]
 ]);
 
 export const submissionRouter = createRouter(routeMap);

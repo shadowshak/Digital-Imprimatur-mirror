@@ -5,7 +5,8 @@ import {
 
   import { serveListener } from "https://deno.land/std@v0.177.0/http/server.ts";
 
-import { submissionRouter } from "./sub/router.ts";
+  import {create} from './sub/create.ts'
+//import { submissionRouter } from "./sub/router.ts";
 import { HttpError } from "../errors.ts";
 
 ///
@@ -27,7 +28,8 @@ function MapErrorResponse(e: Error) {
 
 export async function StartRestServer(port = 8080) {
     const routes = createRouteMap([
-        ["/sub", submissionRouter]
+        //["/sub", submissionRouter]
+        ["/sub/create", create]
     ]);
 
     const router = createRouter(routes);
