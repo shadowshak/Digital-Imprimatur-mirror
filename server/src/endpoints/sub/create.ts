@@ -5,7 +5,6 @@ import {
     jsonResponse,
   } from "https://deno.land/x/reno@v2.0.81/reno/mod.ts";
 import { BadJsonError, InvalidContentTypeError, InvalidMethodError, PayloadTooLargeError } from "../../errors.ts";
-import { AuthError } from "../../models/auth/Errors.ts";
 import { AccessToken } from "../../models/auth/Session.ts";
   
 import { SubmissionId } from "../../models/submissions/Submission.ts";
