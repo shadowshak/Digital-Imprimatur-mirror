@@ -27,3 +27,7 @@ Architecture.drawio.pdf
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+/server-old
+/server/target

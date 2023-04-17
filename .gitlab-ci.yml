@@ -21,6 +21,14 @@ lint-test-job:   # This job also runs in the test stage.
     - echo "Linting code... This will take about 10 seconds."
     - echo "No lint issues found."
 
+hurl-test-job:
+  stage: test
+  image:
+    name: ghcr.io/orange-opensource/hurl:latest
+    entrypoint: [""]
+  script:
+    - find -name server/src/tests/**/*.http | hurl --test
+
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   environment: production

@@ -6,7 +6,10 @@
         { "name": "Bots", "progress": 0.0 }
     ] },
     { "name": "Presentation", "components": [
-        { "name": "REST API", "progress": 0.1 },
+        { "name": "Submission API", "progress": 0.8 },
+        { "name": "Document API", "progress": 0.0 },
+        { "name": "Feedback API", "progress": 0.0 },
+        { "name": "Session API", "progress": 0.0 },
         { "name": "Bot API", "progress": 0.0 }
     ] },
     { "name": "Business Logic", "components": [
