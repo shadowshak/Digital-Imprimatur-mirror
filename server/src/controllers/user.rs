@@ -83,6 +83,17 @@ impl UserController {
         return Ok(user_id)
     }
 
+    ///
+    /// Logs a user in
+    /// Given the 
+    /// - username
+    /// - password
+    /// - role
+    /// 
+    /// Returns the user id
+    /// 
+    /// Nothing is done to mark that the user is logged in
+    /// 
     pub async fn login_user(
         &mut self,
         username:   String,
@@ -126,16 +137,25 @@ impl UserController {
         return Ok(user_id)
     }
 
-    // the function needs to take the user id, the old password, and the new password
-    // the function needs to check that the old password is correct
-    // the function needs to check that the new password is valid
-    // the function needs to hash the new password
-    // the function needs to update the database with the new password
-    // the function needs to return an error if the user id is invalid
-    // the function needs to return an error if the old password is invalid
-    fn change_password(&mut self, user_id: UserId, old_password: String, new_password: String) -> Result<(), ()> {
+   
+   ///
+   /// Updates the password for a user with the given user id. The old password must be correct. 
+   /// 
+    fn change_password(
+        &mut self,
+        user_id: UserId,
+        old_password: String,
+        new_password: String) -> Result<(), UserChangePasswordError>
+    {
         let mut database = Controller::database();
 
+        // the function needs to take the user id, the old password, and the new password
+        // the function needs to check that the old password is correct
+        // the function needs to check that the new password is valid
+        // the function needs to hash the new password
+        // the function needs to update the database with the new password
+        // the function needs to return an error if the user id is invalid
+        // the function needs to return an error if the old password is invalid
 
         return Ok(())
     }
@@ -155,5 +175,11 @@ pub enum UserLoginError {
     TwoUsersWithSameUsername,
     PasswordInvalid,
     InvalidRole,
+    DatabaseError,
+}
+
+pub enum UserChangePasswordError {
+    UserIdInvalid,
+    PasswordInvalid,
     DatabaseError,
 }

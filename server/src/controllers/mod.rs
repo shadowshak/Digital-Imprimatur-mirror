@@ -14,6 +14,9 @@ static USER: OnceCell<Mutex<UserController>> = OnceCell::new();
 pub struct Controller {}
 
 impl Controller {
+    ///
+    /// Returns a reference to the user controller
+    /// 
     pub fn user<'a>() -> MutexGuard<'a, UserController> {
         USER
             .get_or_init(|| todo!())
