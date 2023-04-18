@@ -1,5 +1,6 @@
 mod endpoints;
 pub mod models;
+pub mod controllers;
 
 use axum::{
     Router,

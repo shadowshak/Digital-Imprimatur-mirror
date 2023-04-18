@@ -1,3 +1,4 @@
+use postgres_types::{FromSql, ToSql};
 use serde::{Deserialize, Serialize};
 use chrono::{DateTime, Local};
 use uuid::Uuid;
@@ -6,7 +7,7 @@ uuid_based! (AccessToken);
 uuid_based! (InvalidToken);
 uuid_based! (UserId);
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, ToSql, FromSql)]
 pub enum Role {
     Admin,
     Publisher,
