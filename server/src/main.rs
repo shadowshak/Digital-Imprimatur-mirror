@@ -4,8 +4,9 @@ pub mod controllers;
 
 use axum::{
     Router,
-    routing::{get, post},
+    routing::{get, post}, http::Method,
 };
+use tower_http::cors::{CorsLayer, AllowOrigin, Any};
 use std::net::SocketAddr;
 
 use endpoints::*;
@@ -39,6 +40,11 @@ async fn main() {
         .route("/feedback/download", post(feedback::download))
         .route("/feedback/read", post(feedback::read))
         .route("/feedback/delete", post(feedback::delete))
+
+        .layer(CorsLayer::new()
+            .allow_origin(AllowOrigin::predicate(|_, _| true))
+            .allow_headers(Any)
+            .allow_methods([Method::GET]))
     ;
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
