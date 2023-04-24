@@ -1,0 +1,12 @@
+POST http://localhost:3000/user/create HTTP/1.1
+content-type: application/json
+
+{
+    "user_name": "john",
+    "email": "johnpalladino0@gmail.com",
+    "first_name": "John",
+    "last_name" : "Palladino",
+    "password": "password",
+
+    "role": "admin"
+}

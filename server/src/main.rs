@@ -21,6 +21,7 @@ async fn main() {
         .route("/user/create", post(user::create))
         .route("/user/login", post(user::login))
         .route("/user/invalidate", post(user::invalidate))
+        .route("/user/change_password", post(user::change_password))
         .route("/user/get_info", post(user::get_info))
         .route("/user/submissions", post(user::submissions))
         

@@ -1,4 +1,4 @@
-use crate::{models::{UserId, Role}, controllers::{Controller, data}};
+use crate::{models::{UserId, Role, UserInfo}, controllers::{Controller, data}};
 
 pub struct UserController { }
 
@@ -15,7 +15,7 @@ impl UserController {
         password:   String,
         role:       Role) -> Result<UserId, UserCreateError>
     {
-        let mut database = Controller::database();
+        let mut database = Controller::database().await;
 
         // Check that the username is not taken
         // Check that the email is not taken?
@@ -100,7 +100,7 @@ impl UserController {
         password:   String,
         role:       Role) -> Result<UserId, UserLoginError>
     {
-        let mut database = Controller::database();
+        let mut database = Controller::database().await;
 
         // Get the password, and user id from the database
         let Ok(rows) = database.query(
@@ -147,7 +147,7 @@ impl UserController {
         old_password: String,
         new_password: String) -> Result<(), UserChangePasswordError>
     {
-        let mut database = Controller::database();
+        let mut database = Controller::database().await;
 
         // Get the password, and user id from the database
         let Ok(rows) = database.query(
@@ -163,7 +163,7 @@ impl UserController {
             return Err(UserChangePasswordError::UsernameInvalid);
         }
 
-        let user_id: String         = rows[0].get(0);
+        let user_id: UserId         = rows[0].get(0);
         let password_hashed: String = rows[0].get(1);
 
         // Check that the password is valid
@@ -196,9 +196,9 @@ impl UserController {
     // get user details
     pub async fn get_info(
         &mut self,
-        user_id: UserId) -> Result<(), UserGetInfoError>
+        user_id: UserId) -> Result<UserInfo, UserGetInfoError>
     {
-        let mut database = Controller::database();
+        let mut database = Controller::database().await;
 
         let Ok(rows) = database.query(r#"
             SELECT username, email, first_name, last_name, role
@@ -220,7 +220,13 @@ impl UserController {
 
 
 
-        return Ok(())
+        return Ok(UserInfo {
+            username,
+            email,
+            first_name,
+            last_name,
+            role,
+        })
     }
 }
 
@@ -249,4 +255,11 @@ pub enum UserChangePasswordError {
 pub enum UserGetInfoError {
     DatabaseError,
     UserIdInvalid,
+    TokenInvalid,
+}
+
+impl Default for UserController {
+    fn default() -> Self {
+        Self {  }
+    }
 }

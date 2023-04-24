@@ -1,4 +1,6 @@
-#[derive]
+use super::Role;
+
+#[derive(Clone)]
 pub struct UserInfo {
     pub username:   String,
     pub email:      String,

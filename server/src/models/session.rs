@@ -7,7 +7,7 @@ uuid_based! (AccessToken);
 uuid_based! (InvalidToken);
 uuid_based! (UserId);
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, ToSql, FromSql)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Role {
     Admin,
     Publisher,
@@ -55,5 +55,58 @@ impl<'de> Deserialize<'de> for Role {
         };
 
         Ok(role)
+    }
+}
+
+impl ToSql for Role {
+    fn to_sql(&self, ty: &postgres_types::Type, out: &mut postgres_types::private::BytesMut) -> Result<postgres_types::IsNull, Box<dyn std::error::Error + Sync + Send>>
+        where Self: Sized
+    {
+        match self {
+            Role::Admin => "admin".to_sql(ty, out),
+            Role::Publisher => "publisher".to_sql(ty, out),
+            Role::User => "user".to_sql(ty, out),
+        }
+    }
+
+    fn accepts(ty: &postgres_types::Type) -> bool
+        where Self: Sized
+    {
+        <String as ToSql>::accepts(ty)
+    }
+
+    fn to_sql_checked(
+        &self,
+        ty: &postgres_types::Type,
+        out: &mut postgres_types::private::BytesMut,
+    ) -> Result<postgres_types::IsNull, Box<dyn std::error::Error + Sync + Send>> {
+        match self {
+            Role::Admin => "admin".to_sql_checked(ty, out),
+            Role::Publisher => "publisher".to_sql_checked(ty, out),
+            Role::User => "user".to_sql_checked(ty, out),
+        }
+    }
+}
+
+impl FromSql<'_> for Role {
+    fn from_sql(ty: &postgres_types::Type, raw: &[u8]) -> Result<Self, Box<dyn std::error::Error + Sync + Send>> {
+        let str_role = String::from_sql(ty, raw)?;
+
+        let role =
+        match str_role.as_str() {
+            "admin" => Role::Admin,
+            "publisher" => Role::Publisher,
+            "user" => Role::User,
+            _ => {
+                // todo: just return an error
+                panic!("corrupt table");
+            }
+        };
+
+        Ok(role)
+    }
+
+    fn accepts(ty: &postgres_types::Type) -> bool {
+        <String as FromSql>::accepts(ty)
     }
 }

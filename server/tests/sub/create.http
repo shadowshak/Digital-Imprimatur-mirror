@@ -1,0 +1,27 @@
+### Send a get request
+
+GET http://localhost:3000/sub/create HTTP/1.1 
+
+### Send a non-json request
+
+POST http://localhost:3000/sub/create HTTP/1.1
+content-type: application/text
+
+### Send an empty request
+
+POST http://localhost:3000/sub/create HTTP/1.1
+content-type: application/json
+{
+
+}
+
+### Send a name thats too long
+
+POST http://localhost:3000/sub/create HTTP/1.1
+content-type: application/json
+
+{
+    "name": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
+    "description": "",
+    "token": ""
+}

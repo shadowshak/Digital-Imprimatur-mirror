@@ -1,0 +1,17 @@
+### Send a get request
+
+GET http://localhost:8080/sub/read HTTP/1.1 
+
+### Send a non-json request
+
+POST http://localhost:8080/sub/read HTTP/1.1
+content-type: application/text
+
+### Send an empty request
+
+POST http://localhost:8080/sub/read HTTP/1.1
+content-type: application/json
+
+{
+
+}
