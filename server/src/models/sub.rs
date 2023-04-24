@@ -1,4 +1,5 @@
 use chrono::{DateTime, Local};
+use serde::{Serialize, Deserialize};
 
 uuid_based! (SubId);
 
@@ -18,13 +19,21 @@ pub enum SubmissionStatus {
 /// Represents a submission
 /// 
 pub struct Submission {
-    pub status: SubmissionStatus,
+    pub status:         SubmissionStatus,
 
-    pub name: String,
-    pub desc: String,
+    pub name:           String,
+    pub author:         String,
+    pub desc:           String,
 
-    pub creation: DateTime<Local>,
-    pub last_update: DateTime<Local>,
+    pub creation:       DateTime<Local>,
+    pub last_update:    DateTime<Local>,
 
     // capabilities
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct SubmissionMetadata {
+    pub name:           String,
+    pub author:         String,
+    pub description:    String,
 }
