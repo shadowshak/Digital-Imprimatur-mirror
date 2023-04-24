@@ -97,8 +97,7 @@ impl UserController {
     pub async fn login_user(
         &mut self,
         username:   String,
-        password:   String,
-        role:       Role) -> Result<UserId, UserLoginError>
+        password:   String) -> Result<(UserId, Role), UserLoginError>
     {
         let mut database = Controller::database().await;
 
@@ -130,11 +129,7 @@ impl UserController {
             return Err(UserLoginError::PasswordInvalid);
         };
 
-        if actual_role != role {
-            return Err(UserLoginError::InvalidRole);
-        }
-
-        return Ok(user_id)
+        return Ok((user_id, actual_role))
     }
 
    
@@ -241,7 +236,6 @@ pub enum UserLoginError {
     UsernameInvalid,
     TwoUsersWithSameUsername,
     PasswordInvalid,
-    InvalidRole,
     DatabaseError,
 }
 
