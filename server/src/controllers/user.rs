@@ -138,29 +138,90 @@ impl UserController {
     }
 
    
-   ///
-   /// Updates the password for a user with the given user id. The old password must be correct. 
-   /// 
-    fn change_password(
+    ///
+    /// Updates the password for a user with the given user id. The old password must be correct. 
+    /// 
+    pub async fn change_password(
         &mut self,
-        user_id: UserId,
+        username:     String,
         old_password: String,
         new_password: String) -> Result<(), UserChangePasswordError>
     {
         let mut database = Controller::database();
 
-        // the function needs to take the user id, the old password, and the new password
-        // the function needs to check that the old password is correct
-        // the function needs to check that the new password is valid
-        // the function needs to hash the new password
-        // the function needs to update the database with the new password
-        // the function needs to return an error if the user id is invalid
-        // the function needs to return an error if the old password is invalid
+        // Get the password, and user id from the database
+        let Ok(rows) = database.query(
+            r#"
+                SELECT user_id, password FROM users
+                 WHERE username = $1
+            "#,
+            &[&username]).await else {
+            return Err(UserChangePasswordError::DatabaseError);
+        };
+
+        if rows.len() != 1 {
+            return Err(UserChangePasswordError::UsernameInvalid);
+        }
+
+        let user_id: String         = rows[0].get(0);
+        let password_hashed: String = rows[0].get(1);
+
+        // Check that the password is valid
+        let Ok(true) = bcrypt::verify(old_password, &password_hashed) else {
+            return Err(UserChangePasswordError::PasswordInvalid);
+        };
+
+        // Check that the password is valid
+
+        
+
+        // Hash the password
+        let Ok(hashed_password) = bcrypt::hash(new_password, bcrypt::DEFAULT_COST) else {
+            return Err(UserChangePasswordError::NewPasswordInvalid);
+        };
+
+        // Update the database
+        // and throw an error if one row was not updated
+        let Ok(1) = database.excute(r#"
+            UPDATE users
+            SET password = $2
+            WHERE username = $1
+        "#, &[ &username, &hashed_password ]).await else {
+            return Err(UserChangePasswordError::DatabaseError);
+        };
 
         return Ok(())
     }
 
     // get user details
+    pub async fn get_info(
+        &mut self,
+        user_id: UserId) -> Result<(), UserGetInfoError>
+    {
+        let mut database = Controller::database();
+
+        let Ok(rows) = database.query(r#"
+            SELECT username, email, first_name, last_name, role
+              FROM users
+             WHERE user_id = $1
+        "#, &[ &user_id ]).await else {
+            return Err(UserGetInfoError::DatabaseError);
+        };
+
+        if rows.len() != 1 {
+            return Err(UserGetInfoError::UserIdInvalid);
+        }
+
+        let username:   String = rows[0].get(0);
+        let email:      String = rows[0].get(1);
+        let first_name: String = rows[0].get(2);
+        let last_name:  String = rows[0].get(3);
+        let role:       Role   = rows[0].get(4);
+
+
+
+        return Ok(())
+    }
 }
 
 pub enum UserCreateError {
@@ -179,7 +240,13 @@ pub enum UserLoginError {
 }
 
 pub enum UserChangePasswordError {
-    UserIdInvalid,
+    UsernameInvalid,
     PasswordInvalid,
+    NewPasswordInvalid,
     DatabaseError,
+}
+
+pub enum UserGetInfoError {
+    DatabaseError,
+    UserIdInvalid,
 }

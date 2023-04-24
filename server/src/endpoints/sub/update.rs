@@ -1,9 +1,7 @@
 use axum::{http::StatusCode, Json};
 use serde::{Serialize, Deserialize};
 
-use crate::models::{AccessToken, SubId};
-
-use super::read::SubmissionMetadata;
+use crate::models::{AccessToken, SubId, SubmissionMetadata};
 
 #[derive(Serialize, Deserialize)]
 pub struct SubUpdateRequest {
