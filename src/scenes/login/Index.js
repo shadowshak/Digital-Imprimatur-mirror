@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Card,
@@ -11,8 +11,29 @@ import {
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PlaceholderLogo from "../../assets/placeholderlogo.png";
+import axios from "axios";
 
 function Login() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("publisher");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post("http://localhost:3000/user/login", {
+        user_name: username,
+        password: password,
+        role: role,
+      });
+
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error logging in:", error);
+    }
+  };
+
   return (
     <Box height="100vh" sx={{ backgroundColor: "#dee6ed" }}>
       <Grid
@@ -33,57 +54,73 @@ function Login() {
               }
             />
             <CardContent>
-              <Grid
-                container
-                direction="column"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Grid item sx={{ mb: "30px" }}>
-                  <img src={PlaceholderLogo} alt="logo" />
-                </Grid>
-                <Grid item>
-                  <TextField
-                    sx={{ minWidth: "300px" }}
-                    id="username"
-                    label="Email, Phone, or Username"
-                    variant="standard"
-                  />
-                </Grid>
-                <Grid item sx={{ mt: "10px" }}>
-                  <TextField
-                    sx={{ minWidth: "300px" }}
-                    id="password"
-                    label="Password"
-                    variant="standard"
-                  />
-                </Grid>
+              <form onSubmit={handleSubmit}>
                 <Grid
-                  item
                   container
-                  sx={{ width: "100%" }}
-                  justifyContent="flex-end"
+                  direction="column"
+                  alignItems="center"
+                  justifyContent="center"
                 >
+                  <Grid item sx={{ mb: "30px" }}>
+                    <img src={PlaceholderLogo} alt="logo" />
+                  </Grid>
                   <Grid item>
-                    <Button
-                      sx={{
-                        m: 0,
-                        p: 0,
-                        textTransform: "none",
-                        fontSize: "0.75rem",
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Forgot Username or Password?
+                    <TextField
+                      sx={{ minWidth: "300px" }}
+                      id="username"
+                      label="Email, Phone, or Username"
+                      variant="standard"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item sx={{ mt: "10px" }}>
+                    <TextField
+                      sx={{ minWidth: "300px" }}
+                      id="password"
+                      label="Password"
+                      variant="standard"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item sx={{ mt: "10px" }}>
+                    <TextField
+                      sx={{ minWidth: "300px" }}
+                      id="role"
+                      label="Role"
+                      variant="standard"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                    />
+                  </Grid>
+                  <Grid
+                    item
+                    container
+                    sx={{ width: "100%" }}
+                    justifyContent="flex-end"
+                  >
+                    <Grid item>
+                      <Button
+                        sx={{
+                          m: 0,
+                          p: 0,
+                          textTransform: "none",
+                          fontSize: "0.75rem",
+                          fontWeight: "bold",
+                        }}
+                      >
+                        Forgot Username or Password?
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  <Grid item sx={{ mt: "40px", width: "100%" }}>
+                    <Button variant="contained" fullWidth type="submit">
+                      Sign In
                     </Button>
                   </Grid>
                 </Grid>
-                <Grid item sx={{ mt: "40px", width: "100%" }}>
-                  <Button variant="contained" fullWidth>
-                    Sign In
-                  </Button>
-                </Grid>
-              </Grid>
+              </form>
             </CardContent>
           </Card>
         </Grid>
