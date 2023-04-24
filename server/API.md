@@ -10,18 +10,24 @@
    5. [Document ID](#document-id)
    6. [Feedback ID](#feedback-id)
    7. [Role](#role)
+   8. [Document Metadata](#document-metadata)
+   9. [Feedback Metadata](#feedback-metadata)
 2. [API Endpoints](#api-endpoints)
    1. [User Management](#user-management)
       1. [Create User](#create-user)
       2. [Login User](#login-user)
       3. [Invalidate User Login](#invalidate-login)
+      4. [Change Password](#change-password)
+      5. [Get User Info](#get-user-info)
+      6. [User Submissions](#get-user-submissions)
    2. [Submission API](#submission-api)
       1. [Create Submission](#create-submission)
       2. [Read Submission](#read-submission)
       3. [Update Submission](#update-submission)
       4. [Delete Submission](#delete-submission)
-      5. [List Submission Documents](#list-documents)
-      6. [List Submission Feedback](#list-feedback)
+      5. [Approve Submission](#approve-submission)
+      6. [List Submission Documents](#list-documents)
+      7. [List Submission Feedback](#list-feedback)
    3. [Documents API](#document-api)
       1. [Upload Document](#upload-document)
       2. [Read Document](#read-document)
@@ -32,7 +38,14 @@
       2. [Read Feedback](#read-feedback)
       3. [Download Feedback](#download-feedback)
       4. [Delete Feedback](#delete-feedback)
-3. [Work-In-Progress](#wip)
+   5. [Permissions API](#permission-api)
+      1. [Check Permissions](#check-permissions)
+      2. [List Permissions](#list-permissions)
+      3. [Grant Permissions](#grant-permissions)
+3. [Permissions](#permissions)
+   1. [Admin Permissions](#admin-permissions)
+   2. [Submission Permissions](#submission-permissions)
+   3. [Granting Permissions](#granting-permissions)
 
 ## Data Types
 
@@ -66,21 +79,31 @@ Represents a unique feedback document. Internally this data type is represented 
 
 Represents the role of either a publisher, reviewer, or an admin. This can be represented either as a string, number, or enum (IDK if they have these in javascript). As a string, "publisher" refers to the publisher role, "reviewer" refers to the reviewer role, and "admin" refers to the admin role. Any other string is not a valid role. As a number, 0 refers to a publisher, 1 refers to a reviewer, and 2 refers to an admin. As an enum, Role.Publisher refers to the publisher, Role.Reviewer refers to the reviewer, and Role.Admin refers to the admin role.
 
+### Stage
+
+Represents where a submission is in the approval process. Possible states include:
+
+- Opened
+- Recieved
+- Reviewed
+- AwaitingFeedback
+- Approved
+
+
 ### DocumentMetadata
 
 ```
 {
-
+    date_uploaded:  Date,
+    file_type:      String
 }
 ```
-
-[Work-In-Progress](#wip)
 
 ### FeedbackMetadata
 
 ```
 {
-
+    date_uploaded:  Date,
 }
 ```
 
@@ -201,6 +224,107 @@ Invalidates a logged in session. The access token will be rendered invalid.
 ```
 
 
+#### Change Password
+
+**POST** `/user/change_password`
+
+##### Description
+
+Change the user's password, given the 
+
+##### Request
+
+```
+{
+    user:             UserId,
+    current_password: String,
+    new_password:     String
+}
+```
+
+##### Error Conditions
+
+- `user` doesn't exist
+- `current_password` is wrong
+- `new_password` is an invalid password
+
+
+##### Response
+
+```
+{
+
+}
+```
+
+#### Get User Info
+
+**POST** `/user/get_info`
+
+##### Description
+
+Gets metadata for a user
+
+##### Request
+
+```
+{
+    token:      AccessToken,
+    user:       UserId
+}
+```
+
+##### Error Conditions
+
+- The token doesn't exist
+- User doesn't exist
+
+##### Response
+
+```
+{
+    user_name:  string,
+    first_name: string,
+    last_name:  string,
+    email:      string,
+    role:       Role
+}
+```
+
+#### User Submissions
+
+**POST** `/user/submissions`
+
+##### Description
+
+Returns a list of submissions the user can access
+
+##### Request
+
+```
+{
+    token:      AccessToken,
+}
+```
+
+##### Error Conditions
+
+- The token doesn't exist
+
+##### Response
+
+```
+{
+    submissions: [
+        {
+            id:     SubmissionId,
+            meta:   SubmissionMetadata
+        }
+    ]
+}
+```
+
+
 ### Submission API
 
 #### Create Submission
@@ -272,6 +396,9 @@ Reads the metadata for a submission.
         name:        String,
         author:      String,
         description: String,
+        stage:       Stage,
+        created:     Date,
+        updated:     Date,
     }
 }
 ```
@@ -282,7 +409,7 @@ Reads the metadata for a submission.
 
 ##### Description
 
-Updates the metadata for a subscription
+Updates the metadata for a submission
 
 ##### Request
 
@@ -352,9 +479,42 @@ Deletes a submission.
 }
 ```
 
+#### Approve Submission
+
+**POST** `/sub/approve`
+
+##### Description
+
+Approves a submission
+
+##### Request
+
+```
+{
+    token:          AccessToken,
+    submission_id:  SubmissionId
+}
+```
+
+##### Error Conditions
+
+- `token` doesn't exist
+- `token` is a reviewer
+- `submission_id` doesn't exist
+- `token` doesn't have access to `submission_id`
+- `token` doesn't have approve permissions for `submission_id`
+
+##### Response
+
+```
+{
+
+}
+```
+
 #### List Documents
 
-**POST** `/sub/read/documentument`
+**POST** `/sub/read/document`
 
 ##### Description
 
@@ -680,8 +840,125 @@ Deletes a feedback? should we be able to do this
 }
 ```
 
-## WIP
+### Permission API
 
-- ChangePassword
-- GetUserInfo
-- Permission Managment
+#### Check Permissions
+
+**POST** `/permissions/check`
+
+##### Description
+
+Checks if the user has a permission
+
+##### Request
+
+```
+{
+    token:          AccessToken,
+    permission:     String
+}
+```
+
+##### Error Conditions
+
+- `token` doesn't exist
+- `token` is a publisher
+- `token` doesn't have the permissions
+
+
+##### Response
+
+```
+{
+
+}
+```
+
+#### List Permissions
+
+**POST** `/permissions/check`
+
+##### Description
+
+Lists permissions the user has
+
+##### Request
+
+```
+{
+    token:          AccessToken,
+}
+```
+
+##### Error Conditions
+
+- `token` doesn't exist
+- `token` is a publisher
+
+
+##### Response
+
+```
+{
+    permissions: [String]
+}
+```
+
+#### Grant Permissions
+
+**POST** `/permissions/grant`
+
+##### Description
+
+Grants the permissions to another user
+
+##### Request
+
+```
+{
+    token:          AccessToken,
+    to_user:        UserId,
+    permissions:    [String]
+}
+```
+
+##### Error Conditions
+
+- `token` doesn't exist
+- `token` is a publisher
+- `permissions` are invalid
+- `token` doesn't have the permissions
+- `to_user` doesn't exist
+
+
+##### Response
+
+```
+{
+
+}
+```
+
+## Permissions
+
+Permissions grant users access to perform certain tasks. The frontend must also know about what permissions the user has so it
+
+### Admin Permissions
+
+If a user has the `admin` permission, they can do any tasks
+
+### Submission Permissions
+
+Permissions are granted on a per-submission basis. Each submission has 5 associated permissions: Read, Write, Comment, Delete, and Approve.
+
+These permissions are given as:
+
+- `submission_id.read`
+- `submisison_id.write`
+- `submission_id.comment`
+- `submission_id.delete`
+- `submission_id.approve`
+
+### Granting permissions
+
+Permissions can be granted to another user by a user who has those permissions.
