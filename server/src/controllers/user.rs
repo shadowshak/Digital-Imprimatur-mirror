@@ -1,4 +1,4 @@
-use crate::{models::{UserId, Role}, controllers::{Controller, data}};
+use crate::{models::{UserId, Role, UserInfo}, controllers::{Controller, data}};
 
 pub struct UserController { }
 
@@ -163,7 +163,7 @@ impl UserController {
             return Err(UserChangePasswordError::UsernameInvalid);
         }
 
-        let user_id: String         = rows[0].get(0);
+        let user_id: UserId         = rows[0].get(0);
         let password_hashed: String = rows[0].get(1);
 
         // Check that the password is valid
@@ -196,7 +196,7 @@ impl UserController {
     // get user details
     pub async fn get_info(
         &mut self,
-        user_id: UserId) -> Result<(), UserGetInfoError>
+        user_id: UserId) -> Result<UserInfo, UserGetInfoError>
     {
         let mut database = Controller::database().await;
 
@@ -220,7 +220,13 @@ impl UserController {
 
 
 
-        return Ok(())
+        return Ok(UserInfo {
+            username,
+            email,
+            first_name,
+            last_name,
+            role,
+        })
     }
 }
 
@@ -249,6 +255,7 @@ pub enum UserChangePasswordError {
 pub enum UserGetInfoError {
     DatabaseError,
     UserIdInvalid,
+    TokenInvalid,
 }
 
 impl Default for UserController {

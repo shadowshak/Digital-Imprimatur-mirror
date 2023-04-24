@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, Json};
 use serde::{Deserialize, Serialize};
 
-use crate::{models::{Role, UserId, AccessToken}};
+use crate::{models::{Role, UserId, AccessToken}, controllers::{Controller, UserGetInfoError}};
 
 #[derive(Deserialize, Serialize)]
 pub struct UserGetInfoRequest {
@@ -22,18 +22,26 @@ pub struct UserGetInfoResponse {
 pub async fn get_info(
     Json(UserGetInfoRequest {
         token,
-        user,
+        user: user_id,
     }): Json<UserGetInfoRequest>)
     -> Result<Json<UserGetInfoResponse>, StatusCode>
 {
+    let mut user = Controller::session().await;
+
+    let user_info = match user.get_user_info(user_id, token).await {
+        Ok(user_info) => user_info,
+        Err(UserGetInfoError::UserIdInvalid) => return Err(StatusCode::NO_CONTENT),
+        Err(UserGetInfoError::TokenInvalid) => return Err(StatusCode::UNAUTHORIZED),
+        Err(UserGetInfoError::DatabaseError) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+    };
 
     let response = UserGetInfoResponse {
-        user_name:      "scotthahn1".into(),
-        email:          "scotthahn@saintpaul.com".into(),
-        first_name:     "Scott".into(),
-        last_name:      "Hahn".into(),
+        user_name:      user_info.username,
+        email:          user_info.email,
+        first_name:     user_info.first_name,
+        last_name:      user_info.last_name,
 
-        role:           Role::Publisher
+        role:           user_info.role,
     };
 
     Ok(Json(response))

@@ -55,8 +55,6 @@ pub async fn create(
         _ => todo!()
     };
 
-    let user_id = UserId::new();
-
     let response = UserCreateResponse {
         user_id,
     };

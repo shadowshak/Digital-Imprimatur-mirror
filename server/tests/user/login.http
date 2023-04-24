@@ -1,0 +1,7 @@
+POST http://localhost:3000/user/get_info HTTP/1.1
+content-type: application/json
+
+{
+  "user": "74eebdd9-ec8a-423b-9c39-fed7e9fb1793",
+  "token": "a453be19-dbcd-4667-8b2b-0f5aa5e41eb9"
+}

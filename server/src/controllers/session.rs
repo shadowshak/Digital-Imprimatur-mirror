@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use chrono::{Local, DateTime, Duration};
 
-use crate::models::{AccessToken, UserId, Role};
+use crate::models::{AccessToken, UserId, Role, UserInfo};
 
-use super::{Controller, UserLoginError};
+use super::{Controller, UserLoginError, UserGetInfoError};
 
 pub struct Session {
     access_token:   AccessToken,
@@ -15,7 +15,8 @@ pub struct Session {
 }
 
 pub struct SessionController {
-    sessions: HashMap<AccessToken, Session>
+    sessions:   HashMap<AccessToken, Session>,
+    info_cache: HashMap<UserId, UserInfo>,
 }
 
 impl SessionController {
@@ -78,6 +79,24 @@ impl SessionController {
         Ok(())
     }
 
+    pub async fn get_user_info(
+        &mut self,
+        user: UserId,
+        token: AccessToken) -> Result<UserInfo, UserGetInfoError>
+    {
+        // Verify token
+        if let Err(_) = self.verify_session(token, vec![]) {
+            return Err(UserGetInfoError::TokenInvalid);
+        }
+
+        if let Some(user_info) = self.info_cache.get(&user) {
+            return Ok(user_info.clone());
+        }
+
+        let mut user_controller = Controller::user().await;
+        return user_controller.get_info(user).await;
+    }
+
     pub fn verify_session(
         &mut self,
         token:       AccessToken,
@@ -106,7 +125,10 @@ impl SessionController {
 
 impl Default for SessionController {
     fn default() -> Self {
-        Self { sessions: Default::default() }
+        Self {
+            sessions: Default::default(),
+            info_cache: Default::default(),
+        }
     }
 }
 
