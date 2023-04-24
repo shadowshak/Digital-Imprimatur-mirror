@@ -1,7 +1,7 @@
 use axum::{Json, http::StatusCode};
 use serde::{Deserialize, Serialize};
 
-use crate::models::{AccessToken, UserId};
+use crate::{models::{AccessToken, UserId}, controllers::{Controller, session::UserInvalidateError}};
 
 #[derive(Deserialize, Serialize)]
 pub struct UserInvalidateRequest {
@@ -19,6 +19,14 @@ pub async fn invalidate(
     }): Json<UserInvalidateRequest>)
     -> Result<Json<UserInvalidateResponse>, StatusCode>
 {
+    let mut session = Controller::session().await;
+
+    if let Err(e) = session.invalidate(user_id, token).await {
+        match e {
+            UserInvalidateError::InvalidAccessToken => return Err(StatusCode::UNAUTHORIZED),
+            UserInvalidateError::InvalidUserId => return Err(StatusCode::FORBIDDEN),
+        }
+    }
 
     let response = UserInvalidateResponse;
 

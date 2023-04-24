@@ -15,7 +15,7 @@ impl UserController {
         password:   String,
         role:       Role) -> Result<UserId, UserCreateError>
     {
-        let mut database = Controller::database();
+        let mut database = Controller::database().await;
 
         // Check that the username is not taken
         // Check that the email is not taken?
@@ -100,7 +100,7 @@ impl UserController {
         password:   String,
         role:       Role) -> Result<UserId, UserLoginError>
     {
-        let mut database = Controller::database();
+        let mut database = Controller::database().await;
 
         // Get the password, and user id from the database
         let Ok(rows) = database.query(
@@ -147,7 +147,7 @@ impl UserController {
         old_password: String,
         new_password: String) -> Result<(), UserChangePasswordError>
     {
-        let mut database = Controller::database();
+        let mut database = Controller::database().await;
 
         // Get the password, and user id from the database
         let Ok(rows) = database.query(
@@ -198,7 +198,7 @@ impl UserController {
         &mut self,
         user_id: UserId) -> Result<(), UserGetInfoError>
     {
-        let mut database = Controller::database();
+        let mut database = Controller::database().await;
 
         let Ok(rows) = database.query(r#"
             SELECT username, email, first_name, last_name, role
@@ -249,4 +249,10 @@ pub enum UserChangePasswordError {
 pub enum UserGetInfoError {
     DatabaseError,
     UserIdInvalid,
+}
+
+impl Default for UserController {
+    fn default() -> Self {
+        Self {  }
+    }
 }

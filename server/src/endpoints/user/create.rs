@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, Json};
 use serde::{Deserialize, Serialize};
 
-use crate::{models::{Role, UserId}, endpoints::check_length};
+use crate::{models::{Role, UserId}, endpoints::check_length, controllers::{Controller, UserCreateError}};
 
 #[derive(Deserialize, Serialize)]
 pub struct UserCreateRequest {
@@ -42,8 +42,23 @@ pub async fn create(
     check_length(&last_name, MAX_LAST_NAME_LENGTH)?;
     check_length(&password, MAX_PASSWORD_LENGTH)?;
 
+    let mut user = Controller::user().await;
+
+    let user_id = match user.create_user(user_name, email, first_name, last_name, password, role).await {
+        Ok(user_id) => user_id,
+
+        Err(UserCreateError::UsernameTaken) => return Err(StatusCode::UNAUTHORIZED),
+        Err(UserCreateError::EmailTaken) => return Err(StatusCode::CONFLICT),
+        Err(UserCreateError::PasswordInvalid) => return Err(StatusCode::FORBIDDEN),
+        Err(UserCreateError::DatabaseError) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+
+        _ => todo!()
+    };
+
+    let user_id = UserId::new();
+
     let response = UserCreateResponse {
-        user_id: UserId::new(),
+        user_id,
     };
 
     Ok(Json(response))

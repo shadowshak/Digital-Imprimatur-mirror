@@ -6,24 +6,24 @@
         { "name": "Bots", "progress": 0.0 }
     ] },
     { "name": "Presentation", "components": [
-        { "name": "Submission API", "progress": 0.8 },
-        { "name": "Document API", "progress": 0.8 },
-        { "name": "Feedback API", "progress": 0.8 },
-        { "name": "Session API", "progress": 0.7 },
+        { "name": "Submission API", "progress": 1.0 },
+        { "name": "Document API", "progress": 1.0 },
+        { "name": "Feedback API", "progress": 1.0 },
+        { "name": "Session API", "progress": 1.0 },
         { "name": "Bot API", "progress": 0.0 }
     ] },
     { "name": "Business Logic", "components": [
-        { "name": "Session Controller", "progress": 0.3 },
+        { "name": "Session Controller", "progress": 0.6 },
         { "name": "Document Controller", "progress": 0.0 }
     ] },
     { "name": "Persistence", "components": [
         { "name": "Encryption Controller", "progress": 0.2 },
-        { "name": "User Controller", "progress": 0.6 }
+        { "name": "User Controller", "progress": 0.8 }
     ] },
     { "name": "Data", "components": [
-        { "name": "Data Controller", "progress": 0.8 }
+        { "name": "Data Controller", "progress": 0.9 }
     ] },
     { "name": "Physical", "components": [
-        { "name": "Database", "progress": 0.0 }
+        { "name": "Database", "progress": 0.3 }
     ] }
 ]
