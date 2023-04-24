@@ -1,6 +1,9 @@
+use serde::{Serialize, Deserialize};
+use uuid::Uuid;
+
 macro_rules! uuid_based {
     ($name:ident) => {
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize, postgres_types::FromSql, postgres_types::ToSql)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash, postgres_types::FromSql, postgres_types::ToSql)]
 pub struct $name {
     id: uuid::Uuid,
 }
@@ -12,5 +15,24 @@ impl $name {
         }
     }
 }
-    };
+
+impl serde::Serialize for $name {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer {
+        self.id.serialize(serializer)
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for $name {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de> {
+        let id = uuid::Uuid::deserialize(deserializer)?;
+
+        Ok($name { id })
+    }
+}
+
+    }
 }

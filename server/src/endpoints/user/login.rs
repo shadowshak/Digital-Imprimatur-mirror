@@ -5,7 +5,7 @@ use crate::models::{Role, AccessToken, UserId};
 
 #[derive(Deserialize, Serialize)]
 pub struct UserLoginRequest {
-    user_id:        UserId,
+    username:       String,
     password:       String,
     role:           Role,
 }
@@ -17,7 +17,7 @@ pub struct UserLoginResponse {
 
 pub async fn login(
     Json(UserLoginRequest {
-        user_id,
+        username,
         password,
         role,
     }): Json<UserLoginRequest>)
