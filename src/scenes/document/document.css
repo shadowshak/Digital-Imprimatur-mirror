@@ -1,0 +1,49 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    }
+    
+    h1 {
+    font-size: 2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+    }
+    
+    h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    }
+    
+    .upload-button {
+    display: inline-block;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+    }
+    
+    textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 1.5;
+    }
+    
+    .actions {
+    margin-top: 20px;
+    text-align: right;
+    }
+    
+    button {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    }
