@@ -76,7 +76,7 @@ impl DatabaseController {
     ///
     /// Executes a statement on the database, returning the number of rows affected
     /// 
-    pub async fn excute(
+    pub async fn execute(
         &mut self,
         statement: &str,
         params: &[&(dyn ToSql + Sync)]

@@ -62,7 +62,7 @@ impl UserController {
 
         // Add the user to the database
         let Ok(number_of_rows_affected) =
-        database.excute(r#"
+        database.execute(r#"
             INSERT INTO users (user_id, username, email, first_name, last_name, password, role)
                  VALUES ($1, $2, $3, $4, $5, $6, $7);
         "#, &[
@@ -177,7 +177,7 @@ impl UserController {
 
         // Update the database
         // and throw an error if one row was not updated
-        let Ok(1) = database.excute(r#"
+        let Ok(1) = database.execute(r#"
             UPDATE users
             SET password = $2
             WHERE username = $1
