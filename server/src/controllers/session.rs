@@ -26,12 +26,11 @@ impl SessionController {
     pub async fn login(
         &mut self,
         username: String,
-        password: String,
-        role:     Role) -> Result<(UserId, AccessToken), UserLoginError>
+        password: String) -> Result<(UserId, AccessToken, Role), UserLoginError>
     {
         let mut user = Controller::user().await;
 
-        let user_id = user.login_user(username, password, role).await?;
+        let (user_id, role) = user.login_user(username, password).await?;
 
         // create an access token
         let access_token    = AccessToken::new();
@@ -53,7 +52,7 @@ impl SessionController {
         }
         self.sessions.insert(access_token, session);
 
-        Ok((user_id, access_token))
+        Ok((user_id, access_token, role))
     }
 
     ///

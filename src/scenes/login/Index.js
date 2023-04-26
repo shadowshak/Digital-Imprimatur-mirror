@@ -28,9 +28,11 @@ function Login() {
         role: role,
       });
 
+      alert("Login successful!");
+
       console.log(response.data);
     } catch (error) {
-      console.error("Error logging in:", error);
+      alert(error)
     }
   };
 

@@ -171,8 +171,7 @@ Logs a user in with a user id, password, and role, returning the user id and cre
 ```
 {
     user_name:  String,
-    password:   String,
-    role:       Role
+    password:   String
 }
 ```
 
@@ -180,14 +179,14 @@ Logs a user in with a user id, password, and role, returning the user id and cre
 
 - The user id doesn't exist
 - The password isn't right
-- The role specified isn't the same as the user's role
 
 ##### Response
 
 ```
 {
     user_id:    UserId,
-    token:      AccessToken
+    token:      AccessToken,
+    role:       Role,
 }
 ```
 
