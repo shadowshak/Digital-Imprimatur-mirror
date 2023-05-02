@@ -13,10 +13,14 @@ impl DatabaseController {
     pub async fn connect(&mut self) -> Result<(), Box<dyn Error>> {
         assert!(self.client.is_none());
 
-        let connection_string = "host=localhost user=jkpalladino dbname=di";
+        let host_name = std::env::var("POSTGRES_HOST").unwrap_or_else(|_| "localhost".into());
+        let user_name = std::env::var("POSTGRES_USER").unwrap_or_else(|_| "jkpalladino".into());
+        let db_name   = std::env::var("POSTGRES_DB").unwrap_or_else(|_| "di".into());
+
+        let connection_string = format!("host={host_name} user={user_name} dbname={db_name}");
 
         let (client, connection)
-            = match tokio_postgres::connect(connection_string, NoTls).await
+            = match tokio_postgres::connect(&connection_string, NoTls).await
         {
             Ok(cc) => cc,
             Err(e) => {
