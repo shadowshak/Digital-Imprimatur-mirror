@@ -213,8 +213,6 @@ impl UserController {
         let last_name:  String = rows[0].get(3);
         let role:       Role   = rows[0].get(4);
 
-
-
         return Ok(UserInfo {
             username,
             email,

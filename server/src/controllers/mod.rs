@@ -7,13 +7,14 @@ use tokio::sync::{Mutex, MutexGuard};
 
 use once_cell::sync::OnceCell;
 pub use user::*;
+pub use doc::*;
 
 use self::{data::DatabaseController, session::SessionController, doc::DocumentController};
 
-static DATABASE: OnceCell<Mutex<DatabaseController>> = OnceCell::new();
 static USER: OnceCell<Mutex<UserController>> = OnceCell::new();
 static SESSION: OnceCell<Mutex<SessionController>> = OnceCell::new();
 static DOCUMENT: OnceCell<Mutex<DocumentController>> = OnceCell::new();
+static DATABASE: OnceCell<Mutex<DatabaseController>> = OnceCell::new();
 
 pub struct Controller {}
 

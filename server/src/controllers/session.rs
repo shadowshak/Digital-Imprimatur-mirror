@@ -117,6 +117,9 @@ impl SessionController {
         }
 
         // check that the user has the required permissions
+        if false {
+            return UserVerifyError::InvalidPermissions;
+        }
 
         Ok(())
     }
