@@ -13,17 +13,17 @@
         { "name": "Bot API", "progress": 0.0 }
     ] },
     { "name": "Business Logic", "components": [
-        { "name": "Session Controller", "progress": 0.6 },
-        { "name": "Document Controller", "progress": 0.0 }
+        { "name": "Session Controller", "progress": 0.8 },
+        { "name": "Document Controller", "progress": 0.5 }
     ] },
     { "name": "Persistence", "components": [
         { "name": "Encryption Controller", "progress": 0.2 },
-        { "name": "User Controller", "progress": 0.8 }
+        { "name": "User Controller", "progress": 0.9 }
     ] },
     { "name": "Data", "components": [
-        { "name": "Data Controller", "progress": 0.9 }
+        { "name": "Data Controller", "progress": 1.0 }
     ] },
     { "name": "Physical", "components": [
-        { "name": "Database", "progress": 0.3 }
+        { "name": "Database", "progress": 0.6 }
     ] }
 ]
