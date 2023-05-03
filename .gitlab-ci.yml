@@ -1,7 +1,5 @@
-include:
-  - template: Code-Quality.gitlab-ci.yml
-
 server-unit-tests:
+  state: test
   services:
     - postgres:14.3-alpine
   variables:
