@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, Json};
 use serde::{Serialize, Deserialize};
 
-use crate::{models::{AccessToken, SubId}, controllers::{Controller, SubmissionDeleteError}};
+use crate::{models::{AccessToken, SubId}, controllers::{Controller, SubmissionError}};
 
 
 #[derive(Serialize, Deserialize)]
@@ -29,10 +29,10 @@ pub async fn delete(
     match documents.delete_submission(token, submission_id).await {
         Ok(_) => { },
 
-        Err(SubmissionDeleteError::InvalidAccessToken) => return Err(StatusCode::FORBIDDEN),
-        Err(SubmissionDeleteError::InvalidPermissions) => return Err(StatusCode::UNAUTHORIZED),
-        Err(SubmissionDeleteError::TokenTimedOut) => return Err(StatusCode::FORBIDDEN),
-        Err(SubmissionDeleteError::DatabaseError) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+        Err(SubmissionError::InvalidAccessToken) => return Err(StatusCode::FORBIDDEN),
+        Err(SubmissionError::InvalidPermissions) => return Err(StatusCode::UNAUTHORIZED),
+        Err(SubmissionError::TokenTimedOut) => return Err(StatusCode::FORBIDDEN),
+        Err(SubmissionError::DatabaseError) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
     }
 
     let response = SubDeleteResponse;

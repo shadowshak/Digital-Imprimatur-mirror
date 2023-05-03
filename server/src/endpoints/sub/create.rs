@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, Json};
 use serde::{Deserialize, Serialize};
 
-use crate::{models::{AccessToken, SubId}, endpoints::check_length, controllers::{Controller, SubmissionCreateError}};
+use crate::{models::{AccessToken, SubId}, endpoints::check_length, controllers::{Controller, SubmissionError}};
 
 #[derive(Deserialize, Serialize)]
 pub struct SubCreateRequest {
@@ -39,10 +39,10 @@ pub async fn create(
         match documents.create_submission(token, name, author, description).await {
             Ok(sub_id) => sub_id,
 
-            Err(SubmissionCreateError::InvalidAccessToken) => return Err(StatusCode::FORBIDDEN),
-            Err(SubmissionCreateError::InvalidPermissions) => return Err(StatusCode::UNAUTHORIZED),
-            Err(SubmissionCreateError::TokenTimedOut) => return Err(StatusCode::FORBIDDEN),
-            Err(SubmissionCreateError::DatabaseError) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+            Err(SubmissionError::InvalidAccessToken) => return Err(StatusCode::FORBIDDEN),
+            Err(SubmissionError::InvalidPermissions) => return Err(StatusCode::UNAUTHORIZED),
+            Err(SubmissionError::TokenTimedOut) => return Err(StatusCode::FORBIDDEN),
+            Err(SubmissionError::DatabaseError) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
         };
 
     let response = SubCreateResponse {
