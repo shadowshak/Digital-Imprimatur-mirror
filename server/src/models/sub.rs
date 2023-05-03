@@ -36,4 +36,6 @@ pub struct SubmissionMetadata {
     pub name:           String,
     pub author:         String,
     pub description:    String,
+    pub creation:       DateTime<Local>,
+    pub last_update:    DateTime<Local>,
 }

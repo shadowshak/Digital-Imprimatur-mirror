@@ -1,3 +1,18 @@
+server-unit-tests:
+  stage: test
+  services:
+    - postgres:14.3-alpine
+  variables:
+    POSTGRES_DB: ddc
+    POSTGRES_USER: ddc_admin
+    POSTGRES_PASSWORD: password123
+    POSTGRES_HOST: postgres
+  image: postgres
+  script:
+    - export PGPASSWORD=$POSTGRES_PASSWORD
+    - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
+
+
 stages:          # List of stages for jobs, and their order of execution
   - build
   - test

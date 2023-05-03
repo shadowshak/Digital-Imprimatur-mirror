@@ -6,6 +6,12 @@ pub struct DatabaseController {
     client: Option<Client>,
 }
 
+const POSTGRES_HOST: &'static str = "di-database2.postgres.database.azure.com";
+const POSTGRES_DB: &'static str = "ddc";
+const POSTGRES_USER: &'static str = "di_admin";
+const POSTGRES_PASSWORD: &'static str = "Wixcuf-givku3-vumwyb";
+
+
 impl DatabaseController {
     ///
     /// Connects to the database
@@ -13,10 +19,10 @@ impl DatabaseController {
     pub async fn connect(&mut self) -> Result<(), Box<dyn Error>> {
         assert!(self.client.is_none());
 
-        let connection_string = "host=localhost user=jkpalladino dbname=di";
+        let connection_string = format!("host={POSTGRES_HOST} user={POSTGRES_USER} dbname={POSTGRES_DB} password='{POSTGRES_PASSWORD}'");
 
         let (client, connection)
-            = match tokio_postgres::connect(connection_string, NoTls).await
+            = match tokio_postgres::connect(&connection_string, NoTls).await
         {
             Ok(cc) => cc,
             Err(e) => {
