@@ -2,9 +2,9 @@ use std::collections::HashMap;
 
 use chrono::{Local, DateTime, Duration};
 
-use crate::models::{AccessToken, UserId, Role, UserInfo};
+use crate::models::{AccessToken, UserId, Role, UserInfo, SubId};
 
-use super::{Controller, UserLoginError, UserGetInfoError};
+use super::{Controller, UserLoginError, UserGetInfoError, SubmissionError};
 
 pub struct Session {
     access_token:   AccessToken,
@@ -99,7 +99,7 @@ impl SessionController {
     pub fn verify_session(
         &mut self,
         token:       AccessToken,
-        permissions: Vec<String>) -> Result<(), UserVerifyError>
+        permissions: Vec<String>) -> Result<UserId, UserVerifyError>
     {
         let Some(session) = self.sessions.get(&token) else {
             //return Err(UserLoginError::InvalidAccessToken);
@@ -118,10 +118,45 @@ impl SessionController {
 
         // check that the user has the required permissions
         if false {
-            return UserVerifyError::InvalidPermissions;
+            return Err(UserVerifyError::InvalidPermissions);
         }
 
-        Ok(())
+        Ok(session.user_id)
+    }
+
+    pub async fn get_submissions_by_user(
+        &mut self,
+        token:   AccessToken
+        ) -> Result<Vec<SubId>, SubmissionError>
+    {
+        // check that the token is valid
+        let user_id =
+            match self.verify_session(token, vec![ ]) {
+                Ok(user_id) => { user_id },
+
+                Err(UserVerifyError::InvalidAccessToken) => return Err(SubmissionError::InvalidAccessToken),
+                Err(UserVerifyError::TokenTimedOut) => return Err(SubmissionError::TokenTimedOut),
+                Err(UserVerifyError::InvalidPermissions) => return Err(SubmissionError::InvalidPermissions),
+            };
+
+        let mut data = Controller::database().await;
+
+        let rows = match data.query(r#"
+                SELECT DISTINCT sub_id
+                FROM Permissions
+                WHERE user_id = $1;
+            "#, &[ &user_id ]).await
+        {
+            Ok(rows) => rows,
+            Err(_) => return Err(SubmissionError::DatabaseError),
+        };
+
+        let sub_ids =
+        rows.iter()
+            .map(|row| row.get(0))
+            .collect();
+
+        Ok(sub_ids)
     }
 }
 

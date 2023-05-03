@@ -1,6 +1,6 @@
 use chrono::Local;
 
-use crate::models::{AccessToken, SubId, SubmissionMetadata};
+use crate::models::{AccessToken, SubId, SubmissionMetadata, UserId};
 
 use super::{Controller, session::UserVerifyError};
 
