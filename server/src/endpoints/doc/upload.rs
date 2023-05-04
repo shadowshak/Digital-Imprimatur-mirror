@@ -4,7 +4,7 @@ use axum::{Json, http::StatusCode};
 use serde::{Serialize, Deserialize};
 use serde_bytes_base64::Bytes;
 
-use crate::models::{AccessToken, SubId, DocId};
+use crate::{models::{AccessToken, SubId, DocId}, controllers::Controller};
 
 #[derive(Serialize, Deserialize)]
 pub struct DocUploadRequest {
@@ -30,9 +30,19 @@ pub async fn upload(
         User must be a publisher 
         User must be associated with the submission
     */
+    // todo: check length
+    let mut documents = Controller::document().await;
+
+    let document_id =
+        match documents.create_document(token, submission_id, document.to_vec()).await {
+            Ok(doc_id) => doc_id,
+
+            Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+        };
+
 
     let response = DocUploadResponse {
-        document_id: DocId::new()
+        document_id,
     };
 
     Ok(Json(response))
