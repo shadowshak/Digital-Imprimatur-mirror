@@ -1,14 +1,21 @@
 use chrono::Local;
 
-use crate::models::{AccessToken, SubId, SubmissionMetadata, UserId};
+use crate::models::{AccessToken, SubId, SubmissionMetadata, UserId, SubmissionStatus, DocId};
 
-use super::{Controller, session::UserVerifyError};
+use super::{Controller, session::UserVerifyError, data};
 
 pub struct DocumentController {
 
 }
 
 pub enum SubmissionError {
+    InvalidAccessToken,
+    TokenTimedOut,
+    InvalidPermissions,
+    DatabaseError
+}
+
+pub enum DocumentError {
     InvalidAccessToken,
     TokenTimedOut,
     InvalidPermissions,
@@ -42,14 +49,16 @@ impl DocumentController {
         let creation    = Local::now();
         let last_update = Local::now();
 
+        let status = SubmissionStatus::AwaitingSubmission;
+
         // create the submission
         let mut database = Controller::database().await;
 
         match database.execute(
             r#"
-                INSERT INTO Submissions (sub_id, name, author, description, creation, last_update)
-                VALUES ($1, $2, $3, $4, $5, $6)
-            "#, &[ &sub_id, &name, &author, &description, &creation, &last_update ]).await
+                INSERT INTO Submissions (sub_id, name, author, description, creation, last_update, status)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
+            "#, &[ &sub_id, &name, &author, &description, &creation, &last_update, &status ]).await
         {
             Ok(1) => { },
             _ => return Err(SubmissionError::DatabaseError)
@@ -115,7 +124,7 @@ impl DocumentController {
 
         let rows = match database.query(
             r#"
-                SELECT name, author, description, creation, last_update
+                SELECT name, author, description, creation, last_update, status
                 FROM Submissions
                 WHERE sub_id = $1
             "#, &[&sub_id]).await
@@ -134,13 +143,15 @@ impl DocumentController {
         let description = rows[0].get(2);
         let creation    = rows[0].get(3);
         let last_update = rows[0].get(4);
+        let status      = rows[0].get(5);
 
         Ok(SubmissionMetadata {
             name,
             author,
             description,
             creation,
-            last_update
+            last_update,
+            status,
         })
 
     }
@@ -178,6 +189,40 @@ impl DocumentController {
 
             _ => return Err(SubmissionError::DatabaseError)
         }
+    }
+
+    pub async fn create_document(
+        &mut self,
+        token: AccessToken,
+        sub_id: SubId,
+        document: Vec<u8>) -> Result<DocId, SubmissionError>
+    {
+        let user_id = {
+            let mut session = Controller::session().await;
+
+            match session.verify_session(token, vec![ ]) {
+                Ok(user_id) => user_id,
+
+                Err(UserVerifyError::InvalidAccessToken) => return Err(SubmissionError::InvalidAccessToken),
+                Err(UserVerifyError::TokenTimedOut) => return Err(SubmissionError::TokenTimedOut),
+                Err(UserVerifyError::InvalidPermissions) => return Err(SubmissionError::InvalidPermissions),
+            }
+        };
+
+        let doc_id = DocId::new();
+
+        let mut database = Controller::database().await;
+
+        match database.execute(r#"
+            INSERT INTO Documents (doc_id, sub_id, creator, content)
+            VALUES ($1, $2, $3, $4);
+        "#, &[ &doc_id, &sub_id, &user_id, &document  ]).await
+        {
+            Ok(1) => { },
+            _ => return Err(SubmissionError::DatabaseError)
+        }
+
+        Ok(doc_id)
     }
 }
 

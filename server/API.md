@@ -10,8 +10,9 @@
    5. [Document ID](#document-id)
    6. [Feedback ID](#feedback-id)
    7. [Role](#role)
-   8. [Document Metadata](#document-metadata)
-   9. [Feedback Metadata](#feedback-metadata)
+   8. [Document Metadata](#documentmetadata)
+   9. [Feedback Metadata](#feedbackmetadata)
+   10. [Submission Metadata](#submissionmetadata)
 2. [API Endpoints](#api-endpoints)
    1. [User Management](#user-management)
       1. [Create User](#create-user)
@@ -19,7 +20,7 @@
       3. [Invalidate User Login](#invalidate-login)
       4. [Change Password](#change-password)
       5. [Get User Info](#get-user-info)
-      6. [User Submissions](#get-user-submissions)
+      6. [User Submissions](#user-submissions)
    2. [Submission API](#submission-api)
       1. [Create Submission](#create-submission)
       2. [Read Submission](#read-submission)
@@ -79,7 +80,7 @@ Represents a unique feedback document. Internally this data type is represented 
 
 Represents the role of either a publisher, reviewer, or an admin. This can be represented either as a string, number, or enum (IDK if they have these in javascript). As a string, "publisher" refers to the publisher role, "reviewer" refers to the reviewer role, and "admin" refers to the admin role. Any other string is not a valid role. As a number, 0 refers to a publisher, 1 refers to a reviewer, and 2 refers to an admin. As an enum, Role.Publisher refers to the publisher, Role.Reviewer refers to the reviewer, and Role.Admin refers to the admin role.
 
-### Stage
+### Status
 
 Represents where a submission is in the approval process. Possible states include:
 
@@ -104,6 +105,19 @@ Represents where a submission is in the approval process. Possible states includ
 ```
 {
     date_uploaded:  Date,
+}
+```
+
+### SubmissionMetadata
+
+```
+{
+    name:        String,
+    author:      String,
+    description: String,
+    creation:    Date,
+    last_update: Date,
+    status:      Status
 }
 ```
 
@@ -142,7 +156,7 @@ Creates a new user account. Takes user information as a parameter, and returns t
 - `first_name.length` <= `32`
 - `last_name.length` <= `32`
 - `password.length` <= `32`
-
+.
 ##### Error Conditions
 
 - User already exists
