@@ -1,0 +1,29 @@
+- [ ] Login
+  - [ ] Call login endpoint
+  - [ ] Persist access token
+- [ ] Show a list of submissions
+  - [ ] Call user submissions endpoint
+  - [ ] Display information returned
+    - [ ] Keep it as the state
+- [ ] Upload a document
+  - [ ] Call document upload endpoint
+  - [ ] Show progress bar
+- [ ] Delete a document
+  - [ ] Ask confirmation
+  - [ ] Call endpoint
+  - [ ] Show confirmation
+- [ ] View a document
+  - [ ] Add document listing endpoints
+  - [ ] Add document reading endpoints
+  - [ ] Call document read endpoint
+  - [ ] Display data in react-pdf-highlighter
+- [ ] Highlight a document
+  - [ ] Use react-pdf-highlighter
+  - [ ] Implement feedback uploading
+  - [ ] Upload the highlighted document to
+- [ ] View submission/document
+  - [ ] Implement feedback/document info endpoints
+  - [ ] Call feedback/document info endpoints
+  - [ ] Finish page showing info
+- [ ] Go back to the publisher and view feedback
+  - [ ] Basically the same as viewing the documents
