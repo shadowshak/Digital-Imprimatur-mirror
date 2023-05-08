@@ -63,9 +63,9 @@ impl ToSql for Role {
         where Self: Sized
     {
         match self {
-            Role::Admin => "admin".to_sql(ty, out),
-            Role::Publisher => "publisher".to_sql(ty, out),
-            Role::User => "user".to_sql(ty, out),
+            Role::Admin => "admin".to_string().to_sql(ty, out),
+            Role::Publisher => "publisher".to_string().to_sql(ty, out),
+            Role::User => "user".to_string().to_sql(ty, out),
         }
     }
 
@@ -81,10 +81,10 @@ impl ToSql for Role {
         out: &mut postgres_types::private::BytesMut,
     ) -> Result<postgres_types::IsNull, Box<dyn std::error::Error + Sync + Send>> {
         match self {
-            Role::Admin => "admin".to_sql_checked(ty, out),
-            Role::Publisher => "publisher".to_sql_checked(ty, out),
-            Role::User => "user".to_sql_checked(ty, out),
-        }
+            Role::Admin => "admin",
+            Role::Publisher => "publisher",
+            Role::User => "user",
+        }.to_string().to_sql_checked(ty, out)
     }
 }
 

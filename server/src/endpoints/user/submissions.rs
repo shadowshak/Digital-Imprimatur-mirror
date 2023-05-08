@@ -25,17 +25,21 @@ pub async fn submissions(
     }): Json<UserSubmissionsRequest>)
     -> Result<Json<UserSubmissionsResponse>, StatusCode>
 {
-    let mut session = Controller::session().await;
+    let submissions = {
+        let mut session = Controller::session().await;
 
-    let submissions = match session.get_submissions_by_user(token).await
-    {
-        Ok(submissions) => submissions,
+        match session.get_submissions_by_user(token).await
+        {
+            Ok(submissions) => submissions,
 
-        Err(SubmissionError::InvalidAccessToken) => return Err(StatusCode::FORBIDDEN),
-        Err(SubmissionError::InvalidPermissions) => return Err(StatusCode::UNAUTHORIZED),
-        Err(SubmissionError::TokenTimedOut) => return Err(StatusCode::FORBIDDEN),
-        Err(SubmissionError::DatabaseError) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+            Err(SubmissionError::InvalidAccessToken) => return Err(StatusCode::FORBIDDEN),
+            Err(SubmissionError::InvalidPermissions) => return Err(StatusCode::UNAUTHORIZED),
+            Err(SubmissionError::TokenTimedOut) => return Err(StatusCode::FORBIDDEN),
+            Err(SubmissionError::DatabaseError) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+        }
     };
+
+    println!("{submissions:?}");
 
     let mut documents = Controller::document().await;
 
@@ -46,6 +50,8 @@ pub async fn submissions(
             Ok(meta) => meta,
             Err(e) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
         };
+
+        println!("{meta:?}");
 
         submission_details.push(UserSubmission { id, meta });
     }
