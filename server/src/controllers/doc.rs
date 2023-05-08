@@ -1,6 +1,7 @@
+use axum::http::StatusCode;
 use chrono::Local;
 
-use crate::models::{AccessToken, SubId, SubmissionMetadata, UserId, SubmissionStatus, DocId};
+use crate::{models::{AccessToken, SubId, SubmissionMetadata, UserId, SubmissionStatus, DocId}, endpoints::doc::DocumentMetadata};
 
 use super::{Controller, session::UserVerifyError, data};
 
@@ -224,12 +225,139 @@ impl DocumentController {
 
         Ok(doc_id)
     }
+
+    pub async fn delete_document(
+        &mut self,
+        token: AccessToken,
+        doc_id: DocId) -> Result<(), SubmissionError>
+    {
+        {
+            let mut session = Controller::session().await;
+
+            match session.verify_session(token, vec![ ]) {
+                Ok(_) => { },
+
+                Err(UserVerifyError::InvalidAccessToken) => return Err(SubmissionError::InvalidAccessToken),
+                Err(UserVerifyError::TokenTimedOut) => return Err(SubmissionError::TokenTimedOut),
+                Err(UserVerifyError::InvalidPermissions) => return Err(SubmissionError::InvalidPermissions),
+            }
+        }
+
+        let mut database = Controller::database().await;
+
+        match database.execute(
+            r#"
+                DELETE FROM Documents
+                WHERE doc_id = $1
+            "#, &[ &doc_id ]).await
+        {
+            Ok(1) => Ok(()),
+            _ => Err(SubmissionError::DatabaseError)
+        }
+    }
+
+    pub async fn get_document_metadata(
+        &mut self,
+        token: AccessToken,
+        doc_id: DocId) -> Result<DocumentMetadata, SubmissionError>
+    {
+        {
+            let mut session = Controller::session().await;
+
+            match session.verify_session(token, vec![ ]) {
+                Ok(_) => { },
+
+                Err(UserVerifyError::InvalidAccessToken) => return Err(SubmissionError::InvalidAccessToken),
+                Err(UserVerifyError::TokenTimedOut) => return Err(SubmissionError::TokenTimedOut),
+                Err(UserVerifyError::InvalidPermissions) => return Err(SubmissionError::InvalidPermissions),
+            }
+        }
+
+        let mut database = Controller::database().await;
+
+        let rows = match database.query(
+            r#"
+                SELECT creator, creation, last_update
+                FROM Documents
+                WHERE doc_id = $1
+            "#, &[ &doc_id ]).await
+        {
+            Ok(rows) => rows,
+
+            _ => return Err(SubmissionError::DatabaseError)
+        };
+
+        if rows.len() != 1 {
+            return Err(SubmissionError::DatabaseError)
+        }
+
+        let creator     = rows[0].get(0);
+        let creation    = rows[0].get(1);
+        let last_update = rows[0].get(2);
+
+        Ok(DocumentMetadata {
+            creation,
+            last_update,
+            creator,
+        })
+    }
+
+    pub async fn download_document(
+        &mut self,
+        token: AccessToken,
+        doc_id: DocId) -> Result<Vec<u8>, SubmissionError>
+    {
+        {
+            let mut session = Controller::session().await;
+
+            match session.verify_session(token, vec![ ]) {
+                Ok(_) => { },
+
+                Err(UserVerifyError::InvalidAccessToken) => return Err(SubmissionError::InvalidAccessToken),
+                Err(UserVerifyError::TokenTimedOut) => return Err(SubmissionError::TokenTimedOut),
+                Err(UserVerifyError::InvalidPermissions) => return Err(SubmissionError::InvalidPermissions),
+            }
+        }
+
+        let mut database = Controller::database().await;
+
+        let rows = match database.query(
+            r#"
+                SELECT content
+                FROM Documents
+                WHERE doc_id = $1
+            "#, &[ &doc_id ]).await
+        {
+            Ok(rows) => rows,
+
+            _ => return Err(SubmissionError::DatabaseError)
+        };
+
+        if rows.len() != 1 {
+            return Err(SubmissionError::DatabaseError);
+        }
+
+        let content = rows[0].get(0);
+
+        Ok(content)
+    }
 }
 
 impl Default for DocumentController {
     fn default() -> Self {
         Self {
 
+        }
+    }
+}
+
+impl SubmissionError {
+    pub fn into_status_code(self) -> StatusCode {
+        match self {
+            SubmissionError::InvalidAccessToken => return StatusCode::FORBIDDEN,
+            SubmissionError::InvalidPermissions => return StatusCode::UNAUTHORIZED,
+            SubmissionError::TokenTimedOut => return StatusCode::FORBIDDEN,
+            SubmissionError::DatabaseError => return StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }

@@ -4,7 +4,7 @@ use axum::{Json, http::StatusCode};
 use serde::{Serialize, Deserialize};
 use serde_bytes_base64::Bytes;
 
-use crate::{models::{AccessToken, SubId, DocId}, controllers::Controller};
+use crate::{models::{AccessToken, SubId, DocId}, controllers::{Controller, SubmissionError}};
 
 #[derive(Serialize, Deserialize)]
 pub struct DocUploadRequest {
@@ -36,8 +36,11 @@ pub async fn upload(
     let document_id =
         match documents.create_document(token, submission_id, document.to_vec()).await {
             Ok(doc_id) => doc_id,
-
-            Err(_) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
+            
+            Err(SubmissionError::InvalidAccessToken) => return Err(StatusCode::FORBIDDEN),
+            Err(SubmissionError::InvalidPermissions) => return Err(StatusCode::UNAUTHORIZED),
+            Err(SubmissionError::TokenTimedOut) => return Err(StatusCode::FORBIDDEN),
+            Err(SubmissionError::DatabaseError) => return Err(StatusCode::INTERNAL_SERVER_ERROR),
         };
 
 

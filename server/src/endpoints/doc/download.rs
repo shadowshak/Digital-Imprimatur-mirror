@@ -21,8 +21,10 @@ pub async fn download(
     /*
         User must be associated with the submission the document is attached to 
     */
+    let mut documents = crate::controllers::Controller::document().await;
 
-    let response = Vec::new();
+    let response = documents.download_document(token, document_id).await
+        .map_err(crate::controllers::SubmissionError::into_status_code)?;
 
     Ok(response)
 }
