@@ -56,10 +56,8 @@ function Login() {
           setError("user");
           break
         default:
-          setError("user");
           break
       }
-      return;
     }
 
     // set the local storage
@@ -107,7 +105,7 @@ function Login() {
                     <TextField
                       sx={{ minWidth: "300px" }}
                       id="username"
-                      label="Username"
+                      label="Username"                     
                       variant="standard"
                       error={error === "user"}
                       helperText={error === "user" ? "User not found" : ""}
