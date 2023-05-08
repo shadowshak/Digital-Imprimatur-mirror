@@ -126,10 +126,16 @@ function Home({ role }) {
   };
 
   const handleDelete = () => {
+    documentToDelete.delete();
     handleDeleteDialogClose();
     setDeleteSnackbarOpen(true);
 
     setGeneration(generation + 1);
+  };
+
+  const handleDeleteButtonClick = (document) => {
+    setDocumentToDelete(document);
+    setDeleteDialogOpen(true);
   };
 
   const handleDeleteDialogClose = () => {
@@ -237,7 +243,7 @@ function Home({ role }) {
                     <SubmissionCard submission={submission}
                                     role={role}
                                     handlers={{
-                                      delete: handleDelete,
+                                      delete: handleDeleteButtonClick,
                                       navigate: handleNavigate,
                                     }}/>
                   </ListItem>
@@ -262,10 +268,10 @@ function Home({ role }) {
       </Box>
       <AlertDialogSlide open={open} handleClose={handleClose} page={page} />
       <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
-        <DialogTitle>{`Delete ${documentToDelete}`}</DialogTitle>
+        <DialogTitle>{`Delete ${documentToDelete?.title}`}</DialogTitle>
         <DialogContent>
           <Typography>
-            {`Are you sure you want to delete the document ${documentToDelete}?`}
+            {`Are you sure you want to delete the document ${documentToDelete?.title}?`}
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -306,10 +312,11 @@ function SubmissionCard({
   const navigate = useNavigate();
 
   const onDeleteClick = (e) => {
-    e.handled = true;
+    console.log(e);
+    e.preventDefault();
+    e.stopPropagation();
 
-    submission.delete()
-    handlers.delete()
+    handlers.delete(submission)
   };
 
   const onEditClick = () => {
@@ -320,14 +327,16 @@ function SubmissionCard({
     navigate(`/${role}/document`);
   }
 
-  const onCardClick = () => {
-    handlers.navigate(<IndividualDocument />)
+  const onCardClick = (sender) => {
+    console.log(sender.ariaLabel)
+    handlers.navigate(<IndividualDocument submission={submission} />)
   }
 
   return (
     <Card
-      sx={{ minWidth: "100vh", cursor: "pointer" }}
-      onClick={onCardClick}>
+      sx={{ width: "1000px", cursor: "pointer" }}
+      onClick={onCardClick}
+      aria-label="card">
             <CardHeader
               action={
                 <>
