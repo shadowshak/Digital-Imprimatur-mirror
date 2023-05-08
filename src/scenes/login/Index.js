@@ -20,6 +20,9 @@ function Login() {
 
   const [error, setError] = useState(null);
 
+
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -28,6 +31,7 @@ function Login() {
     let user_id = null;
     let token = null;
     let role = null;
+    let err_code = null;
     let err_code = null;
 
     try {
@@ -44,6 +48,8 @@ function Login() {
 
     } catch (err) {
       err_code = err.response.status
+    } catch (err) {
+      err_code = err.response.status
     }
 
     // persist all 3 and redirect to dashboard
@@ -56,8 +62,6 @@ function Login() {
         case 401:
           // user not found
           setError("user");
-          break
-        default:
           break
       }
       // show error
@@ -111,7 +115,10 @@ function Login() {
                       sx={{ minWidth: "300px" }}
                       id="username"
                       label="Username"
+                      label="Username"
                       variant="standard"
+                      error={error === "user"}
+                      helperText={error === "user" ? "User not found" : ""}
                       error={error === "user"}
                       helperText={error === "user" ? "User not found" : ""}
                       value={username}
