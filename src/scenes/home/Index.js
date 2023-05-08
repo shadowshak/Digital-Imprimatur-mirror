@@ -30,6 +30,7 @@ import {
   Delete as DeleteIcon,
   Info as InfoIcon,
   Add as AddIcon,
+  Visibility as VisibilityIcon,
 } from "@mui/icons-material";
 import DocumentSubmissionStepper from "../../components/SubmitDocument";
 import IndividualDocument from "../../components/ViewDocumentProgress";
@@ -96,7 +97,11 @@ function Home({ role }) {
     if (event.target.closest("button[aria-label='Delete']")) {
       setDeleteDialogOpen(true);
       setDocumentToDelete(`${page}`);
+    } else if (event.target.closest("button[aria-label='View']")) {
+      window.location.assign("/" + role + "/document-viewer");
     } else if (event.target.closest("button[aria-label='Edit']")) {
+      window.location.assign("/" + role + "/document");
+    } else if (event.target.closest("button[aria-label='Info']")) {
       return;
     } else {
       setPage(page);
@@ -205,17 +210,28 @@ function Home({ role }) {
                           <>
                             <IconButton
                               sx={{ color: "#1976d2" }}
-                              aria-label="View"
+                              aria-label="Info"
                               onClick={(event) =>
                                 handleClick(<IndividualDocument />, event)
                               }
                             >
                               <InfoIcon />
                             </IconButton>
-
-                            <IconButton aria-label="Edit">
-                              <EditIcon sx={{ color: "#1976d2" }} />
+                            <IconButton
+                              sx={{ color: "#1976d2" }}
+                              aria-label="View"
+                              onClick={(event) => handleClick(null, event)}
+                            >
+                              <VisibilityIcon />
                             </IconButton>
+                            <IconButton
+                              sx={{ color: "#1976d2" }}
+                              aria-label="Edit"
+                              onClick={(event) => handleClick(null, event)}
+                            >
+                              <EditIcon />
+                            </IconButton>
+
                             {role === "publisher" && (
                               <IconButton
                                 aria-label="Delete"
