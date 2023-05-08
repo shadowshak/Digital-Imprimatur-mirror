@@ -27,7 +27,6 @@ function Login() {
     let token = null;
     let role = null;
     let err_code = null;
-    let err_code = null;
 
     try {
       const { data } = await axios.post("http://localhost:3001/user/login", {
@@ -42,7 +41,7 @@ function Login() {
       role = data.role;
 
     } catch (err) {
-      err_code = err.response.status
+      err_code = err?.response?.status
     }
 
     // persist all 3 and redirect to dashboard
@@ -57,14 +56,10 @@ function Login() {
           setError("user");
           break
         default:
+          setError("user");
           break
       }
-<<<<<<< HEAD
-      // show error
-      alert("login failed");
       return;
-=======
->>>>>>> 9960acb (IDK changed a bunch of stuff my brain isnt working anymore)
     }
 
     // set the local storage
