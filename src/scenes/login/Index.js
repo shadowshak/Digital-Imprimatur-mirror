@@ -20,9 +20,6 @@ function Login() {
 
   const [error, setError] = useState(null);
 
-
-  const [error, setError] = useState(null);
-
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -47,8 +44,6 @@ function Login() {
 
     } catch (err) {
       err_code = err.response.status
-    } catch (err) {
-      err_code = err.response.status
     }
 
     // persist all 3 and redirect to dashboard
@@ -65,22 +60,6 @@ function Login() {
         default:
           break
       }
-    if (err_code) {
-      switch (err_code) {
-        case 403:
-          // invalid password
-          setError("password");
-          break
-        case 401:
-          // user not found
-          setError("user");
-          break
-        default:
-          break
-      }
-      // show error
-      alert("login failed");
-      return;
     }
 
     // set the local storage
@@ -128,11 +107,8 @@ function Login() {
                     <TextField
                       sx={{ minWidth: "300px" }}
                       id="username"
-                      label="Username"
-                      label="Username"
+                      label="Username"                     
                       variant="standard"
-                      error={error === "user"}
-                      helperText={error === "user" ? "User not found" : ""}
                       error={error === "user"}
                       helperText={error === "user" ? "User not found" : ""}
                       value={username}

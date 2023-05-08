@@ -340,6 +340,8 @@ function SubmissionCard({
                               aria-label="View"
                               onClick={onViewClick}>
                     <VisibilityIcon />
+
+                    
                   </IconButton>
                   <IconButton sx={{ color: "#1976d2" }}
                               aria-label="Edit"
