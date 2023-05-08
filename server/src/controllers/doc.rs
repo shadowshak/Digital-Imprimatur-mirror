@@ -95,8 +95,17 @@ impl DocumentController {
             }
         }
 
-         // delete the submission
-         let mut database = Controller::database().await;
+        // delete the submission
+        let mut database = Controller::database().await;
+
+        match database.execute(r#"
+           DELETE FROM Permissions
+           WHERE sub_id = $1
+        "#, &[&sub_id]).await
+        {
+           Ok(1) => { }
+           _ => return Err(SubmissionError::DatabaseError)
+        };
 
         match database.execute(
             r#"

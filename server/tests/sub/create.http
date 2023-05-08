@@ -27,7 +27,7 @@ content-type: application/json
 
 ###
 
-POST http://localhost:3000/sub/create HTTP/1.1
+POST http://localhost:3001/sub/create HTTP/1.1
 content-type: application/json
 
 {
@@ -39,7 +39,7 @@ content-type: application/json
 
 ###
 
-POST http://localhost:3000/user/login HTTP/1.1
+POST http://localhost:3001/user/login HTTP/1.1
 Content-Type: application/json
 
 {

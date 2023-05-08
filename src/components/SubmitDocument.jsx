@@ -33,7 +33,7 @@ const NewDocumentForm = ({ onNext, onSave }) => {
       description: formValues.description,
     };
     axios
-      .post("/sub/create", data)
+      .post("http://localhost:3001/sub/create", data)
       .then((response) => {
         console.log(response.data);
         // handle successful response
@@ -128,7 +128,7 @@ const DocumentUploadForm = ({ onNext, onSave }) => {
     formData.append("token", sessionToken);
 
     try {
-      const response = await axios.post("/document/upload", formData, {
+      const response = await axios.post("http://localhost:3001/document/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
