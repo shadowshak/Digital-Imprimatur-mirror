@@ -19,13 +19,59 @@ import MenuIcon from "@mui/icons-material/Menu";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
 
 function Home({ role }) {
+  const [submissions, setSubmissions] = React.useState([])
+
   const [value, setValue] = React.useState(1);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  const getSubmissions = async () => {
+    const token = sessionStorage.getItem("token");
+
+    const { data } = await axios.post("http://localhost:3000/user/submissions", {
+      token
+    });
+
+    console.log(data);
+
+    const responseSubmissions = data.submissions;
+    const submissions = responseSubmissions.map(({
+      id,
+      meta: {
+        name,
+        author,
+        description,
+        creation,
+        last_update,
+        status,
+      }
+    }) => {
+      return {
+        id,
+        name,
+        author,
+        description,
+        creation,
+        status
+      }
+    });
+
+    setSubmissions(submissions)
+  };
+
+  React.useEffect(() => {
+    try {
+      getSubmissions();
+    }
+    catch(error) {
+      console.log(JSON.stringify(error));
+    }
+  }, []);
 
   return (
     <>
@@ -71,196 +117,19 @@ function Home({ role }) {
             </Tabs>
             <Box sx={{ overflow: "auto" }}>
               <List>
-                <ListItem>
-                  <Card sx={{ minWidth: "100vh" }}>
-                    <CardHeader
-                      action={
-                        <>
-                          <IconButton aria-label="View">
-                            <VisibilityIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          <IconButton aria-label="Edit">
-                            <EditIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          {role === "publisher" && (
-                            <IconButton aria-label="Delete">
-                              <DeleteIcon sx={{ color: "#1976d2" }} />
-                            </IconButton>
-                          )}
-                        </>
-                      }
-                      title="Book or Publication Title"
-                    />
-                    <CardContent>
-                      <Typography sx={{ mt: -4 }} color="text.secondary">
-                        Author Name
-                      </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Date Published
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontStyle: "italic" }}
-                      >
-                        Description
-                      </Typography>
-                    </CardContent>
-                    <CardActions></CardActions>
-                  </Card>
-                </ListItem>
-                <ListItem>
-                  <Card sx={{ minWidth: "100vh" }}>
-                    <CardHeader
-                      action={
-                        <>
-                          <IconButton aria-label="View">
-                            <VisibilityIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          <IconButton aria-label="Edit">
-                            <EditIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          {role === "publisher" && (
-                            <IconButton aria-label="Delete">
-                              <DeleteIcon sx={{ color: "#1976d2" }} />
-                            </IconButton>
-                          )}
-                        </>
-                      }
-                      title="Book or Publication Title"
-                    />
-                    <CardContent>
-                      <Typography sx={{ mt: -4 }} color="text.secondary">
-                        Author Name
-                      </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Date Published
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontStyle: "italic" }}
-                      >
-                        Description
-                      </Typography>
-                    </CardContent>
-                    <CardActions></CardActions>
-                  </Card>
-                </ListItem>
-                <ListItem>
-                  <Card sx={{ minWidth: "100vh" }}>
-                    <CardHeader
-                      action={
-                        <>
-                          <IconButton aria-label="View">
-                            <VisibilityIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          <IconButton aria-label="Edit">
-                            <EditIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          {role === "publisher" && (
-                            <IconButton aria-label="Delete">
-                              <DeleteIcon sx={{ color: "#1976d2" }} />
-                            </IconButton>
-                          )}
-                        </>
-                      }
-                      title="Book or Publication Title"
-                    />
-                    <CardContent>
-                      <Typography sx={{ mt: -4 }} color="text.secondary">
-                        Author Name
-                      </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Date Published
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontStyle: "italic" }}
-                      >
-                        Description
-                      </Typography>
-                    </CardContent>
-                    <CardActions></CardActions>
-                  </Card>
-                </ListItem>
-                <ListItem>
-                  <Card sx={{ minWidth: "100vh" }}>
-                    <CardHeader
-                      action={
-                        <>
-                          <IconButton aria-label="View">
-                            <VisibilityIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          <IconButton aria-label="Edit">
-                            <EditIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          {role === "publisher" && (
-                            <IconButton aria-label="Delete">
-                              <DeleteIcon sx={{ color: "#1976d2" }} />
-                            </IconButton>
-                          )}
-                        </>
-                      }
-                      title="Book or Publication Title"
-                    />
-                    <CardContent>
-                      <Typography sx={{ mt: -4 }} color="text.secondary">
-                        Author Name
-                      </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Date Published
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontStyle: "italic" }}
-                      >
-                        Description
-                      </Typography>
-                    </CardContent>
-                    <CardActions></CardActions>
-                  </Card>
-                </ListItem>
-                <ListItem>
-                  <Card sx={{ minWidth: "100vh" }}>
-                    <CardHeader
-                      action={
-                        <>
-                          <IconButton aria-label="View">
-                            <VisibilityIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          <IconButton aria-label="Edit">
-                            <EditIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          {role === "publisher" && (
-                            <IconButton aria-label="Delete">
-                              <DeleteIcon sx={{ color: "#1976d2" }} />
-                            </IconButton>
-                          )}
-                        </>
-                      }
-                      title="Book or Publication Title"
-                    />
-                    <CardContent>
-                      <Typography sx={{ mt: -4 }} color="text.secondary">
-                        Author Name
-                      </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Date Published
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontStyle: "italic" }}
-                      >
-                        Description
-                      </Typography>
-                    </CardContent>
-                    <CardActions></CardActions>
-                  </Card>
-                </ListItem>
+                {
+                submissions.map((submission) => {
+                  return (
+                  <ListItem>
+                    <SubmissionCard title={submission.name}
+                                    author={submission.author}
+                                    description={submission.description}
+                                    publish_date={submission.creation}
+                                    role={role}/>
+                  </ListItem>
+                  )
+                })
+                }
               </List>
             </Box>
           </Box>
@@ -268,6 +137,51 @@ function Home({ role }) {
       </Grid>
     </>
   );
+}
+
+function SubmissionCard({
+  title,
+  author,
+  description,
+  publish_date,
+  role,
+}) {
+  return (<Card sx={{ minWidth: "100vh" }}>
+            <CardHeader
+              action={
+                <>
+                  <IconButton aria-label="View">
+                    <VisibilityIcon sx={{ color: "#1976d2" }} />
+                  </IconButton>
+                  <IconButton aria-label="Edit">
+                    <EditIcon sx={{ color: "#1976d2" }} />
+                  </IconButton>
+                  {role === "publisher" && (
+                    <IconButton aria-label="Delete">
+                      <DeleteIcon sx={{ color: "#1976d2" }} />
+                    </IconButton>
+                  )}
+                </>
+              }
+              title={title}
+            />
+            <CardContent>
+              <Typography sx={{ mt: -4 }} color="text.secondary">
+                {author}
+              </Typography>
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                {publish_date}
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontStyle: "italic" }}
+              >
+                {description}
+              </Typography>
+            </CardContent>
+            <CardActions></CardActions>
+          </Card>)
 }
 
 export default Home;

@@ -12,28 +12,51 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import PlaceholderLogo from "../../assets/placeholderlogo.png";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("publisher");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    let user_id = null;
+    let token = null;
+    let role = null;
+
     try {
-      const response = await axios.post("http://localhost:3000/user/login", {
+      const { data } = await axios.post("http://localhost:3000/user/login", {
         user_name: username,
         password: password,
-        role: role,
       });
 
-      alert("Login successful!");
+      console.log(JSON.stringify(data));
 
-      console.log(response.data);
+      user_id = data.user_id;
+      token = data.token;
+      role = data.role;
+
     } catch (error) {
-      alert(error)
+      console.log(error)
     }
+
+    // persist all 3 and redirect to dashboard
+    if (user_id == null || token == null || role == null) {
+      // show error
+      alert("login failed")
+      return
+    }
+
+    // set the local storage
+    sessionStorage.setItem("user_id", user_id);
+    sessionStorage.setItem("token", token);
+    sessionStorage.setItem("role", role);
+
+    let page_to_redirect = role === "reviewer" ? "/reviewer/home" : "/publisher/home";
+
+    navigate(page_to_redirect);
   };
 
   return (
@@ -84,16 +107,6 @@ function Login() {
                       variant="standard"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item sx={{ mt: "10px" }}>
-                    <TextField
-                      sx={{ minWidth: "300px" }}
-                      id="role"
-                      label="Role"
-                      variant="standard"
-                      value={role}
-                      onChange={(e) => setRole(e.target.value)}
                     />
                   </Grid>
                   <Grid
