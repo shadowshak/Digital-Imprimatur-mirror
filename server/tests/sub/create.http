@@ -12,7 +12,6 @@ content-type: application/text
 POST http://localhost:3000/sub/create HTTP/1.1
 content-type: application/json
 {
-
 }
 
 ### Send a name thats too long
@@ -24,4 +23,26 @@ content-type: application/json
     "name": "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz",
     "description": "",
     "token": ""
+}
+
+###
+
+POST http://localhost:3000/sub/create HTTP/1.1
+content-type: application/json
+
+{
+    "token": "94729ad3-35af-4656-80ee-e38e027bc469",
+    "name": "Angels and Saints: A Biblical Guide to Friendship with God's Holy Ones",
+    "author": "Scott Hahn",
+    "description": "Angels and saints. Catholics tend to think of them as different from the rest of us. They’re cast in plaster or simpering on a holy card, performing miracles with superhero strength, or playing a harp in highest heaven."
+}
+
+###
+
+POST http://localhost:3000/user/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "user_name": "john",
+    "password": "password"
 }
