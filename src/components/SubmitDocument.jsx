@@ -2,11 +2,8 @@ import React, { useState } from "react";
 import {
   Box,
   Button,
-  FormControl,
   Grid,
-  InputLabel,
-  MenuItem,
-  Select,
+  Input,
   Step,
   StepLabel,
   Stepper,
@@ -17,79 +14,174 @@ import ArticleIcon from "@mui/icons-material/Article";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import SaveIcon from "@mui/icons-material/Save";
 import ApartmentIcon from "@mui/icons-material/Apartment";
+import axios from "axios";
 
-const NewDocumentForm = ({ onNext, onSave }) => (
-  <Box sx={{ pt: 3, width: 700 }}>
-    <Typography variant="h4" gutterBottom>
-      New Document Submission
-    </Typography>
-    <Grid container spacing={3}>
-      <Grid item xs={12}>
-        <TextField label="Document Title" fullWidth variant="outlined" />
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl fullWidth>
-          <InputLabel id="publisher-label">Publisher</InputLabel>
-          <Select label="Publisher" variant="outlined">
-            {/* Add the publishers here */}
-            <MenuItem value="publisher1">Publisher 1</MenuItem>
-            <MenuItem value="publisher2">Publisher 2</MenuItem>
-          </Select>
-        </FormControl>
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          label="Comments (optional)"
-          fullWidth
-          multiline
-          rows={4}
-          variant="outlined"
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <Button
-          onClick={onNext}
-          sx={{ borderRadius: 28 }}
-          variant="contained"
-          color="primary"
-        >
-          Next
-        </Button>
-        <Button
-          onClick={onSave}
-          sx={{ borderRadius: 28, ml: 2 }}
-          variant="outlined"
-        >
-          Save Draft
-        </Button>
-      </Grid>
-    </Grid>
-  </Box>
-);
+const sessionToken = sessionStorage.getItem("token");
 
-const DocumentUploadForm = ({ onNext, onSave }) => (
-  <Box sx={{ pt: 3, minWidth: 700 }}>
-    <Typography variant="h4" gutterBottom>
-      Document Upload
-    </Typography>
-    {/* Implement your document upload functionality here */}
-    <Button
-      onClick={onNext}
-      sx={{ borderRadius: 28 }}
-      variant="contained"
-      color="primary"
-    >
-      Next
-    </Button>
-    <Button
-      onClick={onSave}
-      sx={{ borderRadius: 28, ml: 2 }}
-      variant="outlined"
-    >
-      Save Draft
-    </Button>
-  </Box>
-);
+const NewDocumentForm = ({ onNext, onSave }) => {
+  const [formValues, setFormValues] = React.useState({
+    name: "",
+    author: "",
+    description: "",
+  });
+
+  const handleSubmit = () => {
+    const data = {
+      token: sessionToken,
+      name: formValues.name,
+      author: formValues.author,
+      description: formValues.description,
+    };
+    axios
+      .post("/sub/create", data)
+      .then((response) => {
+        console.log(response.data);
+        // handle successful response
+      })
+      .catch((error) => {
+        console.log(error);
+        // handle error response
+      });
+    onNext();
+  };
+
+  return (
+    <Box sx={{ pt: 3, width: 700 }}>
+      <Typography variant="h4" gutterBottom>
+        New Document Submission
+      </Typography>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <TextField
+            label="Document Title"
+            fullWidth
+            variant="outlined"
+            value={formValues.name}
+            onChange={(e) =>
+              setFormValues({ ...formValues, name: e.target.value })
+            }
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="Author"
+            fullWidth
+            variant="outlined"
+            value={formValues.author}
+            onChange={(e) =>
+              setFormValues({ ...formValues, author: e.target.value })
+            }
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField
+            label="Description"
+            fullWidth
+            multiline
+            rows={4}
+            variant="outlined"
+            value={formValues.description}
+            onChange={(e) =>
+              setFormValues({ ...formValues, description: e.target.value })
+            }
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Button
+            onClick={handleSubmit}
+            sx={{ borderRadius: 28 }}
+            variant="contained"
+            color="primary"
+          >
+            Next
+          </Button>
+          <Button
+            onClick={onSave}
+            sx={{ borderRadius: 28, ml: 2 }}
+            variant="outlined"
+          >
+            Save Draft
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+};
+
+const DocumentUploadForm = ({ onNext, onSave }) => {
+  const [file, setFile] = useState(null);
+  const [submissionId, setSubmissionId] = useState(1);
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!file) {
+      alert("Please select a file to upload");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("document", file);
+    formData.append("submission_id", submissionId);
+    formData.append("token", sessionToken);
+
+    try {
+      const response = await axios.post("/document/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log(
+        "Document uploaded successfully, ID:",
+        response.data.document_id
+      );
+      onNext();
+    } catch (error) {
+      console.error("Error uploading document:", error);
+      alert("Error uploading document");
+    }
+  };
+
+  return (
+    <Box sx={{ pt: 3, minWidth: 700 }}>
+      <Typography variant="h4" gutterBottom>
+        Document Upload
+      </Typography>
+      {/* Implement your document upload functionality here */}
+      <Input
+        type="file"
+        onChange={handleFileChange}
+        style={{ display: "block", marginBottom: "16px" }}
+      />
+      <Button
+        onClick={handleUpload}
+        sx={{ borderRadius: 28 }}
+        variant="contained"
+        color="primary"
+      >
+        Upload
+      </Button>
+      <Button
+        onClick={onNext}
+        sx={{ borderRadius: 28, ml: 2 }}
+        variant="contained"
+        color="primary"
+      >
+        Next
+      </Button>
+      <Button
+        onClick={onSave}
+        sx={{ borderRadius: 28, ml: 2 }}
+        variant="outlined"
+      >
+        Save Draft
+      </Button>
+    </Box>
+  );
+};
 
 const ReviewAndSubmitForm = ({ onSubmit, onSave }) => (
   <Box sx={{ pt: 3, minWidth: 700 }}>
