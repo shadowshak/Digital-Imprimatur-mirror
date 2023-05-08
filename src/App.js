@@ -14,6 +14,7 @@ function App() {
         <Route path="/reviewer/home" element={<Home role="reviewer" />} />
         <Route path="/publisher/home" element={<Home role="publisher" />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route
           path="reviewer/document"
           element={<Document role="reviewer" />}
