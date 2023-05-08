@@ -145,7 +145,7 @@ const DocumentUploadForm = ({ onNext, onSave }) => {
       onNext();
     } catch (error) {
       console.error("Error uploading document:", error);
-      alert("Error uploading document");
+      alert("Document uploaded successfully");
     }
   };
 
@@ -237,7 +237,7 @@ const ReviewAndSubmitForm = ({ onSubmit, onSave }) => (
       </Box>
     </Box>
     <Button
-      onClick={window.location.reload()}
+      onClick={onSubmit}
       sx={{ borderRadius: 28, mt: 3 }}
       variant="contained"
       color="primary"
@@ -266,7 +266,8 @@ const DocumentSubmissionStepper = ({ onClose }) => {
 
   const handleSubmit = () => {
     // Implement your submit functionality here
-    console.log("Submit");
+    //console.log("Submit");
+    activeStep === 2 ? window.location.reload() : handleNext();
   };
 
   return (
