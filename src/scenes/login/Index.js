@@ -41,7 +41,7 @@ function Login() {
       role = data.role;
 
     } catch (err) {
-      err_code = err.response.status
+      err_code = err?.response?.status
     }
 
     // persist all 3 and redirect to dashboard
@@ -56,8 +56,10 @@ function Login() {
           setError("user");
           break
         default:
+          setError("user");
           break
       }
+      return;
     }
 
     // set the local storage
