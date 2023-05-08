@@ -23,6 +23,7 @@ import {
   Slide,
   Snackbar,
 } from "@mui/material";
+<<<<<<< HEAD
 
 import {
   Menu as MenuIcon,
@@ -80,10 +81,18 @@ function AlertDialogSlide({ open, handleClose, page }) {
     </Dialog>
   );
 }
+=======
+import MenuIcon from "@mui/icons-material/Menu";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import axios from "axios";
+>>>>>>> 2087eca0dd2c8874c6eebfcb775d0716930ca2b6
 
 function Home({ role }) {
   const [submissions, setSubmissions] = React.useState([])
 
+<<<<<<< HEAD
   const [value, setValue] = useState(1);
   const [open, setOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -91,11 +100,15 @@ function Home({ role }) {
   const [page, setPage] = useState(null);
   const [deleteSnackbarOpen, setDeleteSnackbarOpen] = useState(false);
   const [draftSavedSnackbarOpen, setDraftSavedSnackbarOpen] = useState(false);
+=======
+  const [value, setValue] = React.useState(1);
+>>>>>>> 2087eca0dd2c8874c6eebfcb775d0716930ca2b6
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+<<<<<<< HEAD
   const handleClick = (page, event) => {
     if (event.target.closest("button[aria-label='Delete']")) {
       setDeleteDialogOpen(true);
@@ -155,6 +168,8 @@ function Home({ role }) {
     setDraftSavedSnackbarOpen(false);
   };
 
+=======
+>>>>>>> 2087eca0dd2c8874c6eebfcb775d0716930ca2b6
   const getSubmissions = async () => {
     const token = sessionStorage.getItem("token");
 
@@ -318,6 +333,7 @@ function SubmissionCard({
   description,
   publish_date,
   role,
+<<<<<<< HEAD
   handleClick
 }) {
   return (
@@ -364,6 +380,21 @@ function SubmissionCard({
                         )
                       }
                     >
+=======
+}) {
+  return (<Card sx={{ minWidth: "100vh" }}>
+            <CardHeader
+              action={
+                <>
+                  <IconButton aria-label="View">
+                    <VisibilityIcon sx={{ color: "#1976d2" }} />
+                  </IconButton>
+                  <IconButton aria-label="Edit">
+                    <EditIcon sx={{ color: "#1976d2" }} />
+                  </IconButton>
+                  {role === "publisher" && (
+                    <IconButton aria-label="Delete">
+>>>>>>> 2087eca0dd2c8874c6eebfcb775d0716930ca2b6
                       <DeleteIcon sx={{ color: "#1976d2" }} />
                     </IconButton>
                   )}
