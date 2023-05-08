@@ -128,11 +128,15 @@ const DocumentUploadForm = ({ onNext, onSave }) => {
     formData.append("token", sessionToken);
 
     try {
-      const response = await axios.post("http://localhost:3001/document/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:3001/document/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       console.log(
         "Document uploaded successfully, ID:",
@@ -233,7 +237,7 @@ const ReviewAndSubmitForm = ({ onSubmit, onSave }) => (
       </Box>
     </Box>
     <Button
-      onClick={onSubmit}
+      onClick={window.location.reload()}
       sx={{ borderRadius: 28, mt: 3 }}
       variant="contained"
       color="primary"
