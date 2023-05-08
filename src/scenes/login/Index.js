@@ -27,7 +27,6 @@ function Login() {
     let token = null;
     let role = null;
     let err_code = null;
-    let err_code = null;
 
     try {
       const { data } = await axios.post("http://localhost:3001/user/login", {
@@ -71,8 +70,6 @@ function Login() {
       alert("login failed");
 >>>>>>> 03f02b1 (IDK changed a bunch of stuff my brain isnt working anymore)
       return;
-=======
->>>>>>> 9960acb (IDK changed a bunch of stuff my brain isnt working anymore)
     }
 
     // set the local storage
