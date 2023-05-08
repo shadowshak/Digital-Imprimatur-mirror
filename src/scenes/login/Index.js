@@ -63,6 +63,8 @@ function Login() {
           // user not found
           setError("user");
           break
+        default:
+          break
       }
       // show error
       alert("login failed");
