@@ -27,6 +27,7 @@ function Login() {
     let token = null;
     let role = null;
     let err_code = null;
+    let err_code = null;
 
     try {
       const { data } = await axios.post("http://localhost:3001/user/login", {
@@ -108,7 +109,10 @@ function Login() {
                       sx={{ minWidth: "300px" }}
                       id="username"
                       label="Username"
+                      label="Username"
                       variant="standard"
+                      error={error === "user"}
+                      helperText={error === "user" ? "User not found" : ""}
                       error={error === "user"}
                       helperText={error === "user" ? "User not found" : ""}
                       value={username}
