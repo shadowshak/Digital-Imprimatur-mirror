@@ -19,6 +19,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Link } from "react-router-dom";
 
 function Home({ role }) {
   const [value, setValue] = React.useState(1);
@@ -72,14 +73,14 @@ function Home({ role }) {
             <Box sx={{ overflow: "auto" }}>
               <List>
                 <ListItem>
-                  <Card sx={{ minWidth: "100vh" }}>
+                <Card sx={{ minWidth: "100vh" }}>
                     <CardHeader
                       action={
                         <>
-                          <IconButton aria-label="View">
+                          <IconButton aria-label="View" component={Link} to="/publisher/document-viewer">
                             <VisibilityIcon sx={{ color: "#1976d2" }} />
                           </IconButton>
-                          <IconButton aria-label="Edit">
+                          <IconButton aria-label="Edit" component={Link} to="/reviewer/document">
                             <EditIcon sx={{ color: "#1976d2" }} />
                           </IconButton>
                           {role === "publisher" && (
