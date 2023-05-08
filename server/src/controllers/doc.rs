@@ -103,7 +103,7 @@ impl DocumentController {
            WHERE sub_id = $1
         "#, &[&sub_id]).await
         {
-           Ok(1) => { }
+           Ok(_) => { }
            _ => return Err(SubmissionError::DatabaseError)
         };
 
