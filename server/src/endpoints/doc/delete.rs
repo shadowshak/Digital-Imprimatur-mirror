@@ -3,7 +3,7 @@
 use axum::{Json, http::StatusCode};
 use serde::{Serialize, Deserialize};
 
-use crate::models::{AccessToken, DocId};
+use crate::{models::{AccessToken, DocId}, controllers::{Controller, SubmissionError}};
 
 #[derive(Serialize, Deserialize)]
 pub struct DocDeleteRequest {
@@ -26,6 +26,11 @@ pub async fn delete(
         User must be a publisher 
         User must have delete permissions 
     */
+
+    let mut documents = Controller::document().await;
+
+    documents.delete_document(token, document_id).await
+        .map_err(SubmissionError::into_status_code)?;
 
     let response = DocDeleteResponse;
 
