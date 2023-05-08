@@ -37,16 +37,15 @@ function Login() {
       user_id = data.user_id;
       token = data.token;
       role = data.role;
-
     } catch (error) {
-      console.log(error)
+      alert(error);
     }
 
     // persist all 3 and redirect to dashboard
     if (user_id == null || token == null || role == null) {
       // show error
-      alert("login failed")
-      return
+      alert("login failed");
+      return;
     }
 
     // set the local storage
@@ -54,7 +53,8 @@ function Login() {
     sessionStorage.setItem("token", token);
     sessionStorage.setItem("role", role);
 
-    let page_to_redirect = role === "reviewer" ? "/reviewer/home" : "/publisher/home";
+    let page_to_redirect =
+      role === "reviewer" ? "/reviewer/home" : "/publisher/home";
 
     navigate(page_to_redirect);
   };
@@ -103,6 +103,7 @@ function Login() {
                     <TextField
                       sx={{ minWidth: "300px" }}
                       id="password"
+                      type="password"
                       label="Password"
                       variant="standard"
                       value={password}
