@@ -101,8 +101,6 @@ function Home({ role }) {
       window.location.assign("/" + role + "/document-viewer");
     } else if (event.target.closest("button[aria-label='Edit']")) {
       window.location.assign("/" + role + "/document");
-    } else if (event.target.closest("button[aria-label='Info']")) {
-      return;
     } else {
       setPage(page);
       setOpen(true);
