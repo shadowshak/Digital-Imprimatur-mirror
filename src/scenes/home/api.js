@@ -12,18 +12,22 @@ export class Submission {
         this.status = status;
     }
 
-    async delete(token) {
+    async delete() {
+        const token = sessionStorage.getItem("token");
+
         try {
             const payload = {
-                token,
-                sub_id: this.id
+                token: token,
+                submission_id: this.id
             };
 
-            await axios.post("http://localhost:3001/user/login", payload);
+            await axios.post("http://localhost:3001/sub/delete", payload);
 
             return { };
         }
         catch({ response }) {
+            console.log(response);
+
             switch (response.status) {
                 case 403:
                     // invalid access token
@@ -33,6 +37,34 @@ export class Submission {
                     return { error: "invalid permissions" }
                 default:
                     return { error: "internal"}
+            }
+        }
+    }
+
+    static async create(title, author, description) {
+        const token = sessionStorage.getItem("token");
+
+        try {
+            const payload = {
+                token,
+                name: title,
+                author,
+                description,
+            };
+
+            const { data } = await axios.post("http://localhost:3001/sub/create", payload);
+
+            return new Submission(data.id, title, author, description, null, null, null);
+        }
+        catch ({ response }) {
+            console.log(response);
+
+            switch (response.status) {
+                case 422:
+                    return { error: "misformed request" }
+
+                default:
+                    return { error: "server error" }
             }
         }
     }

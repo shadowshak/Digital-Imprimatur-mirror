@@ -102,8 +102,7 @@ impl SessionController {
         permissions: Vec<String>) -> Result<UserId, UserVerifyError>
     {
         let Some(session) = self.sessions.get(&token) else {
-            //return Err(UserLoginError::InvalidAccessToken);
-            todo!()
+            return Err(UserVerifyError::InvalidAccessToken)
         };
 
         // check that the session is still valid
@@ -113,7 +112,7 @@ impl SessionController {
 
             // return an error
 
-            todo!()
+            return Err(UserVerifyError::TokenTimedOut);
         }
 
         // check that the user has the required permissions

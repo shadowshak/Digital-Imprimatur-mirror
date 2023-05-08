@@ -19,7 +19,11 @@ import {
   Delete,
 } from "@mui/icons-material";
 
-const IndividualDocument = () => {
+import { Submission } from "../scenes/home/api.js";
+
+const IndividualDocument = ({
+  submission
+}) => {
   const stepsData = [
     {
       label: "Document Received",
@@ -47,8 +51,12 @@ const IndividualDocument = () => {
 
   return (
     <Box sx={{ width: "100%", p: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Book or Publication Title
+      <Typography variant="h4" gutterBottom sx = {{maxWidth: "600px"}}>
+        {submission.title}
+      </Typography>
+
+      <Typography variant="h6" gutterBottom sx = {{maxWidth: "600px"}}>
+        By {submission.author}
       </Typography>
 
       <Stepper
@@ -110,11 +118,11 @@ const IndividualDocument = () => {
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             <Event />
-            <Typography sx={{ ml: 1 }}>Submitted Sept 1, 2023</Typography>
+            <Typography sx={{ ml: 1 }}>Submitted { submission.creation.toLocaleDateString() }</Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
             <Event />
-            <Typography sx={{ ml: 1 }}>Last Modified Oct 1, 2023</Typography>
+            <Typography sx={{ ml: 1 }}>Last Modified { submission.last_update.toLocaleDateString() }</Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <LocationCity />
@@ -147,6 +155,7 @@ const IndividualDocument = () => {
             m: 1,
           }}
           aria-label="delete"
+          onClick={() => Submission.delete(submission.id)}
         >
           <Delete
             sx={{
