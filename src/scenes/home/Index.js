@@ -33,7 +33,7 @@ function Home({ role }) {
   const getSubmissions = async () => {
     const token = sessionStorage.getItem("token");
 
-    const { data } = await axios.post("http://localhost:3000/user/submissions", {
+    const { data } = await axios.post("http://localhost:3001/user/submissions", {
       token
     });
 
