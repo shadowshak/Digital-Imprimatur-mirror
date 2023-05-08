@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
+  Button,
   AppBar,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  DialogContent,
   Toolbar,
   IconButton,
   Typography,
@@ -14,23 +19,144 @@ import {
   CardActions,
   CardHeader,
   Grid,
+  Fab,
+  Slide,
+  Snackbar,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Link } from "react-router-dom";
+
+import {
+  Menu as MenuIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Info as InfoIcon,
+  Add as AddIcon,
+  Visibility as VisibilityIcon,
+} from "@mui/icons-material";
+import DocumentSubmissionStepper from "../../components/SubmitDocument";
+import IndividualDocument from "../../components/ViewDocumentProgress";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="left" ref={ref} {...props} />;
+});
+
+function AlertDialogSlide({ open, handleClose, page }) {
+  const handleDialogClose = () => {
+    console.log("handleClose called!");
+    console.log(page.type.name.toString());
+    console.log("nextstep");
+    if ((page && page.type.name) === "DocumentSubmissionStepper") {
+      console.log("Saving draft...");
+      handleClose();
+    } else {
+      console.log("Closing...");
+      handleClose();
+    }
+  };
+
+  return (
+    <Dialog
+      open={open}
+      TransitionComponent={Transition}
+      onClose={handleDialogClose}
+      keepMounted
+      aria-describedby="alert-dialog-slide-description"
+      PaperProps={{
+        sx: {
+          borderRadius: 0,
+          height: "calc(100vh - 64px)",
+          maxWidth: "100vw",
+          position: "fixed",
+          bottom: 0,
+          right: 0,
+          margin: 0,
+          zIndex: 1299,
+        },
+      }}
+    >
+      <DialogContent sx={{ height: "calc(100vh - 64px)", overflow: "auto" }}>
+        {page}
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 function Home({ role }) {
-  const [value, setValue] = React.useState(1);
+  const [value, setValue] = useState(1);
+  const [open, setOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [documentToDelete, setDocumentToDelete] = useState(null);
+  const [page, setPage] = useState(null);
+  const [deleteSnackbarOpen, setDeleteSnackbarOpen] = useState(false);
+  const [draftSavedSnackbarOpen, setDraftSavedSnackbarOpen] = useState(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  const handleClick = (page, event) => {
+    if (event.target.closest("button[aria-label='Delete']")) {
+      setDeleteDialogOpen(true);
+      setDocumentToDelete(`${page}`);
+    } else if (event.target.closest("button[aria-label='View']")) {
+      window.location.assign("/" + role + "/document-viewer");
+    } else if (event.target.closest("button[aria-label='Edit']")) {
+      window.location.assign("/" + role + "/document");
+    } else if (event.target.closest("button[aria-label='Info']")) {
+      return;
+    } else {
+      setPage(page);
+      setOpen(true);
+    }
+  };
+
+  const handleClose = () => {
+    console.log("handleClose called!");
+    console.log(page.type.name.toString());
+    console.log("nextstep");
+    if ((page && page.type.name) === "DocumentSubmissionStepper") {
+      console.log("Saving draft...");
+      setOpen(false);
+      setDraftSavedSnackbarOpen(true);
+      setPage(null);
+      console.log(" ");
+    } else {
+      console.log("Closing...");
+      setOpen(false);
+      setPage(null);
+      console.log(" ");
+    }
+  };
+
+  const handleDelete = () => {
+    // Delete the document here
+    console.log(`Deleting ${documentToDelete}...`);
+    handleDeleteDialogClose();
+    setDeleteSnackbarOpen(true);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setDeleteDialogOpen(false);
+  };
+
+  const handleDeleteSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setDeleteSnackbarOpen(false);
+  };
+
+  const handleDraftSavedSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setDraftSavedSnackbarOpen(false);
+  };
+
   return (
     <>
-      <AppBar>
+      <AppBar sx={{ zIndex: 1301, position: "sticky", top: 0 }}>
         <Toolbar>
           <IconButton
             size="large"
@@ -46,15 +172,12 @@ function Home({ role }) {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Toolbar />
       <Grid
         container
         direction="column"
         alignItems="center"
         justifyContent="center"
-        sx={{
-          backgroundColor: "#dee6ed",
-        }}
+        sx={{ backgroundColor: "#dee6ed" }}
       >
         <Grid item>
           <Box>
@@ -62,6 +185,7 @@ function Home({ role }) {
               value={value}
               onChange={handleChange}
               aria-label="Select Status Filter"
+              sx={{ width: "100%" }}
             >
               <Tab label="Completed" sx={{ width: "250px" }} />
               <Tab label="In Progress" sx={{ width: "250px" }} />
@@ -71,202 +195,134 @@ function Home({ role }) {
               />
             </Tabs>
             <Box sx={{ overflow: "auto" }}>
+              {" "}
               <List>
-                <ListItem>
-                <Card sx={{ minWidth: "100vh" }}>
-                    <CardHeader
-                      action={
-                        <>
-                          <IconButton aria-label="View" component={Link} to="/publisher/document-viewer">
-                            <VisibilityIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          <IconButton aria-label="Edit" component={Link} to="/reviewer/document">
-                            <EditIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          {role === "publisher" && (
-                            <IconButton aria-label="Delete">
-                              <DeleteIcon sx={{ color: "#1976d2" }} />
-                            </IconButton>
-                          )}
-                        </>
+                {[1, 2, 3, 4, 5].map((item) => (
+                  <ListItem key={item}>
+                    <Card
+                      sx={{ minWidth: "100vh", cursor: "pointer" }}
+                      onClick={(event) =>
+                        handleClick(<IndividualDocument />, event)
                       }
-                      title="Book or Publication Title"
-                    />
-                    <CardContent>
-                      <Typography sx={{ mt: -4 }} color="text.secondary">
-                        Author Name
-                      </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Date Published
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontStyle: "italic" }}
-                      >
-                        Description
-                      </Typography>
-                    </CardContent>
-                    <CardActions></CardActions>
-                  </Card>
-                </ListItem>
-                <ListItem>
-                  <Card sx={{ minWidth: "100vh" }}>
-                    <CardHeader
-                      action={
-                        <>
-                          <IconButton aria-label="View">
-                            <VisibilityIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          <IconButton aria-label="Edit">
-                            <EditIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          {role === "publisher" && (
-                            <IconButton aria-label="Delete">
-                              <DeleteIcon sx={{ color: "#1976d2" }} />
+                    >
+                      <CardHeader
+                        action={
+                          <>
+                            <IconButton
+                              sx={{ color: "#1976d2" }}
+                              aria-label="Info"
+                              onClick={(event) =>
+                                handleClick(<IndividualDocument />, event)
+                              }
+                            >
+                              <InfoIcon />
                             </IconButton>
-                          )}
-                        </>
-                      }
-                      title="Book or Publication Title"
-                    />
-                    <CardContent>
-                      <Typography sx={{ mt: -4 }} color="text.secondary">
-                        Author Name
-                      </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Date Published
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontStyle: "italic" }}
-                      >
-                        Description
-                      </Typography>
-                    </CardContent>
-                    <CardActions></CardActions>
-                  </Card>
-                </ListItem>
-                <ListItem>
-                  <Card sx={{ minWidth: "100vh" }}>
-                    <CardHeader
-                      action={
-                        <>
-                          <IconButton aria-label="View">
-                            <VisibilityIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          <IconButton aria-label="Edit">
-                            <EditIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          {role === "publisher" && (
-                            <IconButton aria-label="Delete">
-                              <DeleteIcon sx={{ color: "#1976d2" }} />
+                            <IconButton
+                              sx={{ color: "#1976d2" }}
+                              aria-label="View"
+                              onClick={(event) => handleClick(null, event)}
+                            >
+                              <VisibilityIcon />
                             </IconButton>
-                          )}
-                        </>
-                      }
-                      title="Book or Publication Title"
-                    />
-                    <CardContent>
-                      <Typography sx={{ mt: -4 }} color="text.secondary">
-                        Author Name
-                      </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Date Published
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontStyle: "italic" }}
-                      >
-                        Description
-                      </Typography>
-                    </CardContent>
-                    <CardActions></CardActions>
-                  </Card>
-                </ListItem>
-                <ListItem>
-                  <Card sx={{ minWidth: "100vh" }}>
-                    <CardHeader
-                      action={
-                        <>
-                          <IconButton aria-label="View">
-                            <VisibilityIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          <IconButton aria-label="Edit">
-                            <EditIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          {role === "publisher" && (
-                            <IconButton aria-label="Delete">
-                              <DeleteIcon sx={{ color: "#1976d2" }} />
+                            <IconButton
+                              sx={{ color: "#1976d2" }}
+                              aria-label="Edit"
+                              onClick={(event) => handleClick(null, event)}
+                            >
+                              <EditIcon />
                             </IconButton>
-                          )}
-                        </>
-                      }
-                      title="Book or Publication Title"
-                    />
-                    <CardContent>
-                      <Typography sx={{ mt: -4 }} color="text.secondary">
-                        Author Name
-                      </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Date Published
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontStyle: "italic" }}
-                      >
-                        Description
-                      </Typography>
-                    </CardContent>
-                    <CardActions></CardActions>
-                  </Card>
-                </ListItem>
-                <ListItem>
-                  <Card sx={{ minWidth: "100vh" }}>
-                    <CardHeader
-                      action={
-                        <>
-                          <IconButton aria-label="View">
-                            <VisibilityIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          <IconButton aria-label="Edit">
-                            <EditIcon sx={{ color: "#1976d2" }} />
-                          </IconButton>
-                          {role === "publisher" && (
-                            <IconButton aria-label="Delete">
-                              <DeleteIcon sx={{ color: "#1976d2" }} />
-                            </IconButton>
-                          )}
-                        </>
-                      }
-                      title="Book or Publication Title"
-                    />
-                    <CardContent>
-                      <Typography sx={{ mt: -4 }} color="text.secondary">
-                        Author Name
-                      </Typography>
-                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                        Date Published
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontStyle: "italic" }}
-                      >
-                        Description
-                      </Typography>
-                    </CardContent>
-                    <CardActions></CardActions>
-                  </Card>
-                </ListItem>
+
+                            {role === "publisher" && (
+                              <IconButton
+                                aria-label="Delete"
+                                onClick={(event) =>
+                                  handleClick(
+                                    "Book or Publication Title",
+                                    event
+                                  )
+                                }
+                              >
+                                <DeleteIcon sx={{ color: "#1976d2" }} />
+                              </IconButton>
+                            )}
+                          </>
+                        }
+                        title="Book or Publication Title"
+                      />
+                      <CardContent>
+                        <Typography sx={{ mt: -4 }} color="text.secondary">
+                          Author Name
+                        </Typography>
+                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                          Date Published
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ fontStyle: "italic" }}
+                        >
+                          Description
+                        </Typography>
+                      </CardContent>
+                      <CardActions
+                        sx={{ justifyContent: "flex-end" }}
+                      ></CardActions>
+                    </Card>
+                  </ListItem>
+                ))}
               </List>
             </Box>
           </Box>
         </Grid>
       </Grid>
+      <Box sx={{ position: "fixed", bottom: "32px", right: "32px" }}>
+        <Fab
+          color="primary"
+          aria-label="add"
+          onClick={(event) =>
+            handleClick(
+              <DocumentSubmissionStepper onClose={handleClose} keepMounted />,
+              event
+            )
+          }
+        >
+          <AddIcon />
+        </Fab>
+      </Box>
+      <AlertDialogSlide open={open} handleClose={handleClose} page={page} />
+      <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
+        <DialogTitle>{`Delete ${documentToDelete}`}</DialogTitle>
+        <DialogContent>
+          <Typography>
+            {`Are you sure you want to delete the document ${documentToDelete}?`}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={deleteSnackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleDeleteSnackbarClose}
+        message="Document Deleted"
+        action={
+          <Button color="primary" size="small" onClick={handleDelete}>
+            Undo
+          </Button>
+        }
+      />
+      <Snackbar
+        open={draftSavedSnackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleDraftSavedSnackbarClose}
+        message="Draft Saved"
+      />
     </>
   );
 }
