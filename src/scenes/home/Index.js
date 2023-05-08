@@ -305,8 +305,8 @@ function SubmissionCard({
 }) {
   const navigate = useNavigate();
 
-  const onDeleteClick = (x, e) => {
-    console.log(x, e)
+  const onDeleteClick = (e) => {
+    e.handled = true;
 
     submission.delete()
     handlers.delete()
