@@ -32,17 +32,17 @@ impl DocumentController {
         description: String) -> Result<SubId, SubmissionError>
     {
         // check that the token is valid
-        {
+        let user_id = {
             let mut session = Controller::session().await;
 
-            if let Err(e) = session.verify_session(token, vec![ ]) {
-                match e {
-                    UserVerifyError::InvalidAccessToken => return Err(SubmissionError::InvalidAccessToken),
-                    UserVerifyError::TokenTimedOut => return Err(SubmissionError::TokenTimedOut),
-                    UserVerifyError::InvalidPermissions => return Err(SubmissionError::InvalidPermissions),
-                }
+            match session.verify_session(token, vec![ ]) {
+                Ok(user_id) => user_id,
+
+                Err(UserVerifyError::InvalidAccessToken) => return Err(SubmissionError::InvalidAccessToken),
+                Err(UserVerifyError::TokenTimedOut) => return Err(SubmissionError::TokenTimedOut),
+                Err(UserVerifyError::InvalidPermissions) => return Err(SubmissionError::InvalidPermissions),
             }
-        }
+        };
 
         let sub_id = SubId::new();
 
@@ -62,6 +62,14 @@ impl DocumentController {
             "#, &[ &sub_id, &name, &author, &description, &creation, &last_update, &status ]).await
         {
             Ok(1) => { },
+            _ => return Err(SubmissionError::DatabaseError)
+        }
+
+        match database.execute(r#"
+            INSERT INTO Permissions (user_id, sub_id, role)
+            VALUES ($1, $2, $3)
+        "#, &[ &user_id, &sub_id, &"admin" ]).await {
+            Ok(1) => {}
             _ => return Err(SubmissionError::DatabaseError)
         }
 

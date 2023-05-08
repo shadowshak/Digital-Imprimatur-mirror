@@ -33,7 +33,7 @@ pub struct Submission {
     // capabilities
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct SubmissionMetadata {
     pub name:           String,
     pub author:         String,
@@ -92,7 +92,7 @@ impl ToSql for SubmissionStatus {
             SubmissionStatus::Rejected => "rejected",
             SubmissionStatus::Accepted => "accepted",
             SubmissionStatus::Finalized => "finalized",
-        };
+        }.to_string();
 
         string_repr.to_sql(ty, out)
     }
@@ -117,7 +117,7 @@ impl ToSql for SubmissionStatus {
             SubmissionStatus::Rejected => "rejected",
             SubmissionStatus::Accepted => "accepted",
             SubmissionStatus::Finalized => "finalized",
-        };
+        }.to_string();
 
         string_repr.to_sql_checked(ty, out)
     }

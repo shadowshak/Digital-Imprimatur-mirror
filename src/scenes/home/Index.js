@@ -34,6 +34,7 @@ import {
 } from "@mui/icons-material";
 import DocumentSubmissionStepper from "../../components/SubmitDocument";
 import IndividualDocument from "../../components/ViewDocumentProgress";
+import axios from "axios";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="left" ref={ref} {...props} />;
@@ -81,6 +82,8 @@ function AlertDialogSlide({ open, handleClose, page }) {
 }
 
 function Home({ role }) {
+  const [submissions, setSubmissions] = React.useState([])
+
   const [value, setValue] = useState(1);
   const [open, setOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -152,6 +155,49 @@ function Home({ role }) {
     setDraftSavedSnackbarOpen(false);
   };
 
+  const getSubmissions = async () => {
+    const token = sessionStorage.getItem("token");
+
+    const { data } = await axios.post("http://localhost:3001/user/submissions", {
+      token
+    });
+
+    console.log(data);
+
+    const responseSubmissions = data.submissions;
+    const submissions = responseSubmissions.map(({
+      id,
+      meta: {
+        name,
+        author,
+        description,
+        creation,
+        last_update,
+        status,
+      }
+    }) => {
+      return {
+        id,
+        name,
+        author,
+        description,
+        creation,
+        status
+      }
+    });
+
+    setSubmissions(submissions)
+  };
+
+  React.useEffect(() => {
+    try {
+      getSubmissions();
+    }
+    catch(error) {
+      console.log(JSON.stringify(error));
+    }
+  }, []);
+
   return (
     <>
       <AppBar sx={{ zIndex: 1301, position: "sticky", top: 0 }}>
@@ -195,79 +241,20 @@ function Home({ role }) {
             <Box sx={{ overflow: "auto" }}>
               {" "}
               <List>
-                {[1, 2, 3, 4, 5].map((item) => (
-                  <ListItem key={item}>
-                    <Card
-                      sx={{ minWidth: "100vh", cursor: "pointer" }}
-                      onClick={(event) =>
-                        handleClick(<IndividualDocument />, event)
-                      }
-                    >
-                      <CardHeader
-                        action={
-                          <>
-                            <IconButton
-                              sx={{ color: "#1976d2" }}
-                              aria-label="Info"
-                              onClick={(event) =>
-                                handleClick(<IndividualDocument />, event)
-                              }
-                            >
-                              <InfoIcon />
-                            </IconButton>
-                            <IconButton
-                              sx={{ color: "#1976d2" }}
-                              aria-label="View"
-                              onClick={(event) => handleClick(null, event)}
-                            >
-                              <VisibilityIcon />
-                            </IconButton>
-                            <IconButton
-                              sx={{ color: "#1976d2" }}
-                              aria-label="Edit"
-                              onClick={(event) => handleClick(null, event)}
-                            >
-                              <EditIcon />
-                            </IconButton>
-
-                            {role === "publisher" && (
-                              <IconButton
-                                aria-label="Delete"
-                                onClick={(event) =>
-                                  handleClick(
-                                    "Book or Publication Title",
-                                    event
-                                  )
-                                }
-                              >
-                                <DeleteIcon sx={{ color: "#1976d2" }} />
-                              </IconButton>
-                            )}
-                          </>
-                        }
-                        title="Book or Publication Title"
-                      />
-                      <CardContent>
-                        <Typography sx={{ mt: -4 }} color="text.secondary">
-                          Author Name
-                        </Typography>
-                        <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                          Date Published
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ fontStyle: "italic" }}
-                        >
-                          Description
-                        </Typography>
-                      </CardContent>
-                      <CardActions
-                        sx={{ justifyContent: "flex-end" }}
-                      ></CardActions>
-                    </Card>
+                {
+                submissions.map((submission) => {
+                  return (
+                  <ListItem>
+                    <SubmissionCard title={submission.name}
+                                    author={submission.author}
+                                    description={submission.description}
+                                    publish_date={submission.creation}
+                                    role={role}
+                                    onClick={handleClick}/>
                   </ListItem>
-                ))}
+                  )
+                })
+                }
               </List>
             </Box>
           </Box>
@@ -323,6 +310,84 @@ function Home({ role }) {
       />
     </>
   );
+}
+
+function SubmissionCard({
+  title,
+  author,
+  description,
+  publish_date,
+  role,
+  handleClick
+}) {
+  return (
+    <Card
+      sx={{ minWidth: "100vh", cursor: "pointer" }}
+      onClick={(event) =>
+        handleClick(<IndividualDocument />, event)
+      }
+    >
+            <CardHeader
+              action={
+                <>
+                  <IconButton
+                    sx={{ color: "#1976d2" }}
+                    aria-label="Info"
+                    onClick={(event) =>
+                      handleClick(<IndividualDocument />, event)
+                    }
+                  >
+                    <InfoIcon />
+                  </IconButton>
+                  <IconButton
+                    sx={{ color: "#1976d2" }}
+                    aria-label="View"
+                    onClick={(event) => handleClick(null, event)}
+                  >
+                    <VisibilityIcon />
+                  </IconButton>
+                  <IconButton
+                    sx={{ color: "#1976d2" }}
+                    aria-label="Edit"
+                    onClick={(event) => handleClick(null, event)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+
+                  {role === "publisher" && (
+                    <IconButton
+                      aria-label="Delete"
+                      onClick={(event) =>
+                        handleClick(
+                          "Book or Publication Title",
+                          event
+                        )
+                      }
+                    >
+                      <DeleteIcon sx={{ color: "#1976d2" }} />
+                    </IconButton>
+                  )}
+                </>
+              }
+              title={title}
+            />
+            <CardContent>
+              <Typography sx={{ mt: -4 }} color="text.secondary">
+                {author}
+              </Typography>
+              <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                {publish_date}
+              </Typography>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontStyle: "italic" }}
+              >
+                {description}
+              </Typography>
+            </CardContent>
+            <CardActions></CardActions>
+          </Card>)
 }
 
 export default Home;
