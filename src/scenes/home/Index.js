@@ -24,6 +24,10 @@ import {
   Snackbar,
 } from "@mui/material";
 
+import { useNavigate } from "react-router-dom";
+
+import { Submission } from "./api";
+
 import {
   Menu as MenuIcon,
   Edit as EditIcon,
@@ -92,22 +96,15 @@ function Home({ role }) {
   const [deleteSnackbarOpen, setDeleteSnackbarOpen] = useState(false);
   const [draftSavedSnackbarOpen, setDraftSavedSnackbarOpen] = useState(false);
 
+  const [ generation, setGeneration ] = useState(0);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
-  const handleClick = (page, event) => {
-    if (event.target.closest("button[aria-label='Delete']")) {
-      setDeleteDialogOpen(true);
-      setDocumentToDelete(`${page}`);
-    } else if (event.target.closest("button[aria-label='View']")) {
-      window.location.assign("/" + role + "/document-viewer");
-    } else if (event.target.closest("button[aria-label='Edit']")) {
-      window.location.assign("/" + role + "/document");
-    } else {
-      setPage(page);
-      setOpen(true);
-    }
+  const handleNavigate = (page) => {
+    setPage(page);
+    setOpen(true);
   };
 
   const handleClose = () => {
@@ -129,10 +126,10 @@ function Home({ role }) {
   };
 
   const handleDelete = () => {
-    // Delete the document here
-    console.log(`Deleting ${documentToDelete}...`);
     handleDeleteDialogClose();
     setDeleteSnackbarOpen(true);
+
+    setGeneration(generation + 1);
   };
 
   const handleDeleteDialogClose = () => {
@@ -176,14 +173,7 @@ function Home({ role }) {
         status,
       }
     }) => {
-      return {
-        id,
-        name,
-        author,
-        description,
-        creation,
-        status
-      }
+      return new Submission(id, name, author, description, new Date(creation), new Date(last_update), status)
     });
 
     setSubmissions(submissions)
@@ -196,10 +186,10 @@ function Home({ role }) {
     catch(error) {
       console.log(JSON.stringify(error));
     }
-  }, []);
+  }, [generation]);
 
   return (
-    <>
+    <Box sx={{ backgroundColor: "#dee6ed", width: '100vw', height: '100vh' }}>
       <AppBar sx={{ zIndex: 1301, position: "sticky", top: 0 }}>
         <Toolbar>
           <IconButton
@@ -221,7 +211,6 @@ function Home({ role }) {
         direction="column"
         alignItems="center"
         justifyContent="center"
-        sx={{ backgroundColor: "#dee6ed" }}
       >
         <Grid item>
           <Box>
@@ -245,12 +234,12 @@ function Home({ role }) {
                 submissions.map((submission) => {
                   return (
                   <ListItem>
-                    <SubmissionCard title={submission.name}
-                                    author={submission.author}
-                                    description={submission.description}
-                                    publish_date={submission.creation}
+                    <SubmissionCard submission={submission}
                                     role={role}
-                                    onClick={handleClick}/>
+                                    handlers={{
+                                      delete: handleDelete,
+                                      navigate: handleNavigate,
+                                    }}/>
                   </ListItem>
                   )
                 })
@@ -265,10 +254,7 @@ function Home({ role }) {
           color="primary"
           aria-label="add"
           onClick={(event) =>
-            handleClick(
-              <DocumentSubmissionStepper onClose={handleClose} keepMounted />,
-              event
-            )
+            handleNavigate(<DocumentSubmissionStepper onClose={handleClose} keepMounted />)
           }
         >
           <AddIcon />
@@ -308,82 +294,81 @@ function Home({ role }) {
         onClose={handleDraftSavedSnackbarClose}
         message="Draft Saved"
       />
-    </>
+    </Box>
   );
 }
 
 function SubmissionCard({
-  title,
-  author,
-  description,
-  publish_date,
+  submission,
   role,
-  handleClick
+  handlers
 }) {
+  const navigate = useNavigate();
+
+  const onDeleteClick = (x, e) => {
+    console.log(x, e)
+
+    submission.delete()
+    handlers.delete()
+  };
+
+  const onEditClick = () => {
+    navigate(`/${role}/document`);
+  }
+
+  const onViewClick = () => {
+    navigate(`/${role}/document`);
+  }
+
+  const onCardClick = () => {
+    handlers.navigate(<IndividualDocument />)
+  }
+
   return (
     <Card
       sx={{ minWidth: "100vh", cursor: "pointer" }}
-      onClick={(event) =>
-        handleClick(<IndividualDocument />, event)
-      }
-    >
+      onClick={onCardClick}>
             <CardHeader
               action={
                 <>
-                  <IconButton
-                    sx={{ color: "#1976d2" }}
-                    aria-label="Info"
-                    onClick={(event) =>
-                      handleClick(<IndividualDocument />, event)
-                    }
-                  >
+                  <IconButton sx={{ color: "#1976d2" }}
+                              aria-label="Info"
+                              onClick={onCardClick}>
                     <InfoIcon />
                   </IconButton>
-                  <IconButton
-                    sx={{ color: "#1976d2" }}
-                    aria-label="View"
-                    onClick={(event) => handleClick(null, event)}
-                  >
+                  <IconButton sx={{ color: "#1976d2" }}
+                              aria-label="View"
+                              onClick={onViewClick}>
                     <VisibilityIcon />
                   </IconButton>
-                  <IconButton
-                    sx={{ color: "#1976d2" }}
-                    aria-label="Edit"
-                    onClick={(event) => handleClick(null, event)}
-                  >
+                  <IconButton sx={{ color: "#1976d2" }}
+                              aria-label="Edit"
+                              onClick={onEditClick}>
                     <EditIcon />
                   </IconButton>
 
                   {role === "publisher" && (
-                    <IconButton
-                      aria-label="Delete"
-                      onClick={(event) =>
-                        handleClick(
-                          "Book or Publication Title",
-                          event
-                        )
-                      }
-                    >
+                    <IconButton aria-label="Delete" onClick={onDeleteClick}>
                       <DeleteIcon sx={{ color: "#1976d2" }} />
                     </IconButton>
                   )}
                 </>
               }
-              title={title}
+              title={submission.title}
             />
             <CardContent>
               <Typography sx={{ mt: -4 }} color="text.secondary">
-                {author}
+                {submission.author}
               </Typography>
               <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                {publish_date}
+                {submission.creation.toLocaleDateString()}
               </Typography>
               <Typography
                 variant="body2"
                 color="text.secondary"
                 sx={{ fontStyle: "italic" }}
               >
-                {description}
+                {submission.description}
               </Typography>
             </CardContent>
             <CardActions></CardActions>
