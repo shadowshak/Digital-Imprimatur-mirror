@@ -16,7 +16,6 @@ import axios from "axios";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("publisher");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,14 +24,13 @@ function Login() {
       const response = await axios.post("http://localhost:3000/user/login", {
         user_name: username,
         password: password,
-        role: role,
       });
 
       alert("Login successful!");
 
       console.log(response.data);
     } catch (error) {
-      alert(error)
+      alert(error);
     }
   };
 
@@ -80,20 +78,11 @@ function Login() {
                     <TextField
                       sx={{ minWidth: "300px" }}
                       id="password"
+                      type="password"
                       label="Password"
                       variant="standard"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item sx={{ mt: "10px" }}>
-                    <TextField
-                      sx={{ minWidth: "300px" }}
-                      id="role"
-                      label="Role"
-                      variant="standard"
-                      value={role}
-                      onChange={(e) => setRole(e.target.value)}
                     />
                   </Grid>
                   <Grid
