@@ -111,7 +111,7 @@ function Login() {
                   justifyContent="center"
                 >
                   <Grid item sx={{ mb: "30px" }}>
-                    <img src={PlaceholderLogo} alt="logo" />
+                    <img src={PlaceholderLogo} alt="logo" style={{ width: '200px' }} />
                   </Grid>
                   <Grid item>
                     <TextField
