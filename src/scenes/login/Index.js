@@ -42,7 +42,11 @@ function Login() {
       role = data.role;
 
     } catch (err) {
+<<<<<<< HEAD
       err_code = err?.response?.status
+=======
+      err_code = err.response.status
+>>>>>>> 03f02b1 (IDK changed a bunch of stuff my brain isnt working anymore)
     }
 
     // persist all 3 and redirect to dashboard
@@ -60,7 +64,15 @@ function Login() {
           setError("user");
           break
       }
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+      // show error
+      alert("login failed");
+>>>>>>> 03f02b1 (IDK changed a bunch of stuff my brain isnt working anymore)
       return;
+=======
+>>>>>>> 9960acb (IDK changed a bunch of stuff my brain isnt working anymore)
     }
 
     // set the local storage
@@ -109,10 +121,7 @@ function Login() {
                       sx={{ minWidth: "300px" }}
                       id="username"
                       label="Username"
-                      label="Username"
                       variant="standard"
-                      error={error === "user"}
-                      helperText={error === "user" ? "User not found" : ""}
                       error={error === "user"}
                       helperText={error === "user" ? "User not found" : ""}
                       value={username}

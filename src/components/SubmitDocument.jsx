@@ -128,6 +128,11 @@ const DocumentUploadForm = ({ onNext, onSave }) => {
     formData.append("token", sessionToken);
 
     try {
+      const response = await axios.post("http://localhost:3001/document/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       const response = await axios.post(
         "http://localhost:3001/document/upload",
         formData,
