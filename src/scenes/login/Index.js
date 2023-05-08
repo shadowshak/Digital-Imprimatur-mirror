@@ -17,6 +17,9 @@ import { useNavigate } from "react-router-dom";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -25,6 +28,7 @@ function Login() {
     let user_id = null;
     let token = null;
     let role = null;
+    let err_code = null;
 
     try {
       const { data } = await axios.post("http://localhost:3001/user/login", {
@@ -38,12 +42,22 @@ function Login() {
       token = data.token;
       role = data.role;
 
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      err_code = err.response.status
     }
 
     // persist all 3 and redirect to dashboard
-    if (user_id == null || token == null || role == null) {
+    if (err_code) {
+      switch (err_code) {
+        case 403:
+          // invalid password
+          setError("password");
+          break
+        case 401:
+          // user not found
+          setError("user");
+          break
+      }
       // show error
       alert("login failed")
       return
@@ -93,8 +107,10 @@ function Login() {
                     <TextField
                       sx={{ minWidth: "300px" }}
                       id="username"
-                      label="Email, Phone, or Username"
+                      label="Username"
                       variant="standard"
+                      error={error === "user"}
+                      helperText={error === "user" ? "User not found" : ""}
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                     />
@@ -105,6 +121,9 @@ function Login() {
                       id="password"
                       label="Password"
                       variant="standard"
+                      type="password"
+                      error={error === "password"}
+                      helperText={error === "password" ? "Incorrect password" : ""}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
