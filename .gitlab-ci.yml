@@ -46,7 +46,7 @@ sonarqube-check: #static analysis tool
     - sonar-scanner -Dsonar.qualitygate.wait=true
   allow_failure: true
   rules:
-    - if: $CI_COMMIT_REF_NAME == 'main' || $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_REF_NAME == 'pipeline' || $CI_PIPELINE_SOURCE == 'merge_request_event'
 
 hurl-test-job:
   stage: test
